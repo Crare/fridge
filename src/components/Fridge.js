@@ -67,7 +67,7 @@ const styles = {
 
 const mapStateToProps = state => {
 
-  const purchases = Object.keys(state.purchases)
+  const purchases = Object.keys(state.fridge)
     .map( 
       uid => ({ ...state.purchases[uid], uid })
     );

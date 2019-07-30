@@ -7,3 +7,4 @@ export * from './Spinner';
 export * from './ConfirmModal';
 export * from './ToggleButton';
 export * from './TextLink';
+export * from './CustomDatePicker';
