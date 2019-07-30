@@ -6,6 +6,7 @@ import { View, Text } from 'react-native';
  * CustomDatePicker
  * @var label show left of the  datepicker element.
  * @var dateChanged callback function on datechange.
+ * @var minDate minimum date to select.
  * @returns dateChanged with new date.
  */
 class CustomDatePicker extends Component {
@@ -28,7 +29,7 @@ class CustomDatePicker extends Component {
   }
  
   render() {
-    const { label, dateChanged } = this.props;
+    const { label, dateChanged, minDate } = this.props;
     const { labelStyle, containerStyle } = styles;
     
     return (
@@ -38,6 +39,7 @@ class CustomDatePicker extends Component {
           style={{width: 200}}
           date={this.state.date}
           mode="date"
+          minDate={minDate}
           placeholder="placeholder"
           format="DD.MM.YYYY"
           confirmBtnText="Confirm"

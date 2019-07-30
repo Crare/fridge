@@ -4,11 +4,11 @@ import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { CardSection } from './common';
  
-class ListItem extends Component {
+class FridgeListItem extends Component {
 
-  calculateExpirationDays(expirationDate) {
+  calculateExpirationDays(expirationdate) {
     const a = moment(new Date());
-    const b = moment(new Date(expirationDate));
+    const b = moment(new Date(expirationdate));
     const days = b.diff(a, 'days');
     const dayText = Math.abs(days) == 1 ? 'day' : 'days';
     if (days >= 1) {
@@ -25,7 +25,7 @@ class ListItem extends Component {
   }
 
   render() {
-    const { name, expirationDate, pieces } = this.props.purchase;
+    const { name, expirationdate, amount } = this.props.purchase;
     const { containerStyle, titleStyle, expirationStyle, piecesStyle } = styles;
 
     return (
@@ -33,13 +33,13 @@ class ListItem extends Component {
         <View style={containerStyle}>
           <CardSection style={{ flexDirection: 'row' }}>
             <Text style={expirationStyle}>
-              {this.calculateExpirationDays(expirationDate)}
+              {this.calculateExpirationDays(expirationdate)}
             </Text>
             <Text style={titleStyle}>
               {name}
             </Text>
             <Text style={piecesStyle}>
-              {pieces} pcs
+              {amount} pcs
             </Text>
           </CardSection>
         </View>
@@ -74,4 +74,4 @@ const styles = {
   }
 }
  
-export default ListItem;
+export default FridgeListItem;

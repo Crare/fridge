@@ -3,19 +3,18 @@ import { View, Text, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { fetchPurchases } from '../actions';
 import { Spinner, Button } from './common';
-import ListItem from './ListItem'; 
+import FridgeListItem from './FridgeListItem'; 
 import { Actions } from 'react-native-router-flux';
 
 
 class Fridge extends Component {
-
 
   componentDidMount() {
     this.props.fetchPurchases();
   }
 
   renderItem = ({ item }) => {
-    return <ListItem purchase={item}/>
+    return <FridgeListItem purchase={item}/>
   }
 
   scanBarcode() {
@@ -23,37 +22,55 @@ class Fridge extends Component {
     Actions.newProduct();
   }
 
+  renderList() {
+    const { errorTextStyle, container } = styles;
+    const { error, loading, purchases } = this.props;
+
+    if (loading) {
+      return (
+        <Spinner />
+      );
+    } else if (error) {
+      return (
+        <Text style={errorTextStyle}>
+          {error}
+        </Text>
+      );
+    }
+    return (
+      <View style={container}> 
+        <Text style={{ padding: 10 }}>Fridge contains:</Text>
+
+        <FlatList style={{ margin: 10 }}
+          data={purchases}
+          keyExtractor={ (purchase) => purchase.uid }
+          renderItem={this.renderItem}
+        />
+      </View>
+    );
+  }
+
   render() {
+    const { barcodeButtonStyle } = styles;
 
     return (
       <View style={{flex: 1}}>
-        <View style={{height: 60, paddingBottom: 10, paddingTop: 10}}>
+        <View style={barcodeButtonStyle}>
           <Button onPress={this.scanBarcode.bind(this)}>Scan barcode</Button>
         </View>
 
-        <View style={styles.container}>
-          
-          <Text style={{ padding: 10 }}>Fridge contains:</Text>
-
-          <FlatList style={{ margin: 10 }}
-            data={this.props.purchases}
-            keyExtractor={ (purchase) => purchase.uid }
-            renderItem={this.renderItem}
-          />
-
-          {this.props.loading && <Spinner />}
-      
-          <Text style={styles.errorTextStyle}>
-            {this.props.error}
-          </Text>
-
-        </View>
+        {this.renderList()}
     </View>
     );
   };
 }
 
 const styles = {
+  barcodeButtonStyle: {
+    height: 60,
+    paddingBottom: 10,
+    paddingTop: 10
+  },
   container: {
     flex: 1
   },
@@ -67,12 +84,17 @@ const styles = {
 
 const mapStateToProps = state => {
 
-  const purchases = Object.keys(state.fridge)
-    .map( 
-      uid => ({ ...state.purchases[uid], uid })
+  console.log('mapStateToProps, state:', state);
+  if (state.fridgeReducer) {
+    const purchases = Object.keys(state.fridgeReducer)
+      .map( 
+        uid => ({ ...state.fridgeReducer[uid], uid })
     );
+    return { purchases };
+  }
+  
+  return {};
 
-  return { purchases };
 };
 
 export default connect(mapStateToProps, { fetchPurchases })(Fridge);

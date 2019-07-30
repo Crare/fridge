@@ -5,7 +5,10 @@ import {
   PASSWORD_CHANGED,
   LOGIN_USER_SUCCESS,
   LOGIN_USER_FAIL,
-  LOGIN_USER
+  LOGIN_USER,
+  LOGOUT_USER,
+  CHECKING_USER_LOGIN,
+  NO_USER_LOGGED_IN
 } from './types';
 
 export const emailChanged = (text) => {
@@ -38,6 +41,32 @@ export const loginUser = ({ email, password }) => {
   };
 };
 
+export const checkUserLoggedIn = () => {
+  return (dispatch) => {
+    dispatch({ type: CHECKING_USER_LOGIN });
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        loginUserSuccess(dispatch, user);
+      } else {
+        dispatch({ type: NO_USER_LOGGED_IN });
+      }
+    });
+  };
+}
+
+export const signOut = () => {
+  return (dispatch) => {
+    
+    firebase.auth().signOut();
+
+    dispatch({
+      type: LOGOUT_USER
+    });
+
+    Actions.auth({ type: 'reset' });
+  };
+}
+
 const loginUserFail = (dispatch) => {
   dispatch({ type: LOGIN_USER_FAIL });
 }
@@ -48,5 +77,6 @@ const loginUserSuccess = (dispatch, user) => {
     payload: user
   });
 
-  Actions.main();
+  Actions.main({ type: 'reset' });
 }
+

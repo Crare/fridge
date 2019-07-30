@@ -7,11 +7,10 @@ import reducers from './reducers';
 import Router from './Router';
 import firebaseConfig from './firebaseConfig.json';
 
-class App extends Component {
 
-  componentDidMount() {
-    firebase.initializeApp(firebaseConfig);
-  }
+firebase.initializeApp(firebaseConfig); // initialize before app runs
+
+class App extends Component {
 
   render() {
     const store = createStore(reducers, {}, applyMiddleware(ReduxThunk));

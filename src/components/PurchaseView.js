@@ -3,19 +3,27 @@ import { connect } from 'react-redux';
 import { View, Text, Picker } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Card, CardSection, Input, Button, Spinner, CustomDatePicker } from './common';
-import { fetchProduct, purchaseUpdate } from '../actions';
+import { fetchProduct, purchaseUpdate, savePurchase } from '../actions';
 
 class PurchaseView extends Component {
 
   componentDidMount() {
     if (this.props.product_key) {
-      console.log('product_key:', this.props.product_key);
       this.props.fetchProduct(this.props.product_key);
     }
   }
 
   pressedSave() {
-    console.log('pressed save!');
+    const {product, purchase, product_key } = this.props;
+    
+    this.props.savePurchase({ 
+      name: product.name,
+      barcode: product.barcode,
+      expirationdate: purchase.expirationdate,
+      remindBeforeDate: purchase.remindBeforeDate,
+      amount: purchase.amount,
+      product_key
+    });
   }
 
   reportProduct() {
@@ -23,29 +31,45 @@ class PurchaseView extends Component {
     Actions.report();
   }
 
-  renderProduct() {
-    if (this.props.loading || !this.props.product) {
-      return (
-        <Card>
-          <CardSection>
-            <Spinner />
-          </CardSection>
-        </Card>
-      );
-    }
+  spinner() {
+    return (
+      <Card>
+        <CardSection>
+          <Spinner />
+        </CardSection>
+      </Card>
+    ); 
+  }
 
-    const { product } = this.props;
+  errorCard(text) {
+    return (
+      <Card>
+        <CardSection>
+          <Text>{text}</Text>
+        </CardSection>
+      </Card>
+    );
+  }
+
+  renderProduct() {
+    if (this.props.productLoading) {
+      return this.spinner();
+    } else if (this.props.productError) {
+      return this.errorCard(this.props.productError);
+    }
+    const { name, barcode } = this.props.product;
+    const { productLabelStyle, productTextStyle } = styles;
 
     return (
       <Card>
         <CardSection style={{padding: 15}}>
-          <Text style={{fontWeight: '600' }}>name:</Text>
-          <Text>{product.name}</Text>
+          <Text style={productLabelStyle}>Name: </Text>
+          <Text style={productTextStyle}>{name}</Text>
         </CardSection>
         
         <CardSection style={{padding: 15}}>
-          <Text style={{fontWeight: '600' }}>barcode:</Text>
-          <Text>{product.barcode}</Text>
+          <Text style={productLabelStyle}>Barcode: </Text>
+          <Text style={productTextStyle}>{barcode}</Text>
         </CardSection>
 
         <CardSection style={{ padding: 15, marginBottom: 10 }}>
@@ -61,9 +85,49 @@ class PurchaseView extends Component {
     );
   }
 
+  renderSaveButton() {
+    const { purchase } = this.props;
+    let disabled = false;
+
+    if (purchase.expirationdate 
+      && purchase.remindBeforeDate 
+      && purchase.amount) {
+      disabled = true;
+    }
+
+    return (
+      <Button
+        style={{ width: '50%'}}
+        disabled={disabled}
+        onPress={this.pressedSave.bind(this)}>
+          Save
+      </Button>
+    );
+  }
+  renderButtons() {
+    if (this.props.purchaseLoading) {
+      return this.spinner();
+    } else if (this.props.purchaseError) {
+      return this.errorCard(this.props.purchaseError);
+    }
+    
+    return (
+      <Card>
+        <CardSection>
+          <Button style={{ width: '50%'}} onPress={() => Actions.pop()}>Cancel</Button>
+          <Button style={{ width: '50%'}}
+            onPress={this.pressedSave.bind(this)}>
+              Save
+          </Button>
+          {this.renderSaveButton()}
+        </CardSection>
+      </Card>
+    );
+  }
+
   render() {
 
-    const { expirationdate, remindBeforeDate, amount } = this.props;
+    const { expirationdate, remindBeforeDate, amount } = this.props.purchase;
 
     return (
       <View>
@@ -76,6 +140,7 @@ class PurchaseView extends Component {
             <CustomDatePicker
             label="Expiration date:" 
             date={expirationdate}
+            minDate={new Date()}
             dateChanged={value => this.props.purchaseUpdate({ prop: 'expirationdate', value })}
             />
           </CardSection>
@@ -87,7 +152,7 @@ class PurchaseView extends Component {
           <CardSection style={{ flexDirection: 'column' }}>
             <Text style={{ flex: 1 }}>Remind me about expiration:</Text>
             <Picker style={{ flex: 1 }}
-              selectedValue={this.props.shift}
+              selectedValue={remindBeforeDate}
               onValueChange={value => this.props.purchaseUpdate({ prop: 'remindBeforeDate', value })}
             >
               <Picker.Item label="On expiration day" value="0" />
@@ -114,28 +179,39 @@ class PurchaseView extends Component {
 
         </Card>
 
-        <Card>
-          <CardSection>
-            <Button style={{ width: '50%'}} onPress={() => Actions.pop()}>Cancel</Button>
-            <Button style={{ width: '50%'}}
-              onPress={this.pressedSave.bind(this)}>
-                Save
-            </Button>
-          </CardSection>
-        </Card>
+        {this.renderButtons()}
+        
       </View>
     );
   };
 }
 
+const styles = {
+  productLabelStyle: {
+    flex: 1,
+    fontWeight: '600',
+    fontSize: 18
+  },
+  productTextStyle: {
+    flex: 2,
+    fontSize: 18
+  }
+}
+
 
 const mapStateToProps = (state) => {
-  console.log('mapStateToProps state:', state);
-  console.log('mapStateToProps props:', this.props);
-  const { expirationdate, remindBeforeDate, product, error, loading } = state.product;
+  const { productReducer, purchaseReducer } = state;
+  
+  return {
+    product: productReducer.product,
+    productError: productReducer.error,
+    productLoading: productReducer.loading,
 
-  return { expirationdate, remindBeforeDate, product, error, loading };
+    purchase: purchaseReducer.purchase,
+    purchaseError: purchaseReducer.error,
+    purchaseLoading: purchaseReducer.loading,
+  };
 };
 
 
-export default connect(mapStateToProps, { fetchProduct, purchaseUpdate }) (PurchaseView);
+export default connect(mapStateToProps, { fetchProduct, purchaseUpdate, savePurchase }) (PurchaseView);

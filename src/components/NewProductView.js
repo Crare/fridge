@@ -3,19 +3,11 @@ import { connect } from 'react-redux';
 import { View, Text } from 'react-native';
 import { Card, CardSection, Input, Button, ToggleButton, TextLink, Spinner } from './common';
 import { Actions } from 'react-native-router-flux';
-import { nameChanged, barcodeChanged, saveNewProduct } from '../actions';
+import { saveNewProduct, productUpdate } from '../actions';
 
 class NewProductView extends Component {
 
   state = { canSave: false };
-
-  onBarcodeChange(text) {
-    this.props.barcodeChanged(text);
-  }
-
-  onNameChange(text) {
-    this.props.nameChanged(text);
-  }
 
   pressedLink() {
     Actions.rules();
@@ -25,7 +17,7 @@ class NewProductView extends Component {
     if (!this.state.canSave) {
       return;
     }
-    const { name, barcode } = this.props;
+    const { name, barcode } = this.props.product;
 
     this.props.saveNewProduct({ name, barcode });
   }
@@ -74,7 +66,8 @@ class NewProductView extends Component {
   }
 
   render() {
-    
+    const { name, barcode } = this.props.product;
+
     return (
       <View>
 
@@ -83,8 +76,8 @@ class NewProductView extends Component {
             <Input
               label="name"
               placeholder="Coca-Cola light 0.5l"
-              onChangeText={this.onNameChange.bind(this)}
-              value={this.props.name}
+              onChangeText={value => this.props.productUpdate({ prop: 'name', value })}
+              value={name}
             ></Input>
           </CardSection>
 
@@ -92,8 +85,8 @@ class NewProductView extends Component {
             <Input
               label="barcode"
               placeholder="01234567890"
-              onChangeText={this.onBarcodeChange.bind(this)}
-              value={this.props.barcode}
+              onChangeText={value => this.props.productUpdate({ prop: 'barcode', value })}
+              value={barcode}
             ></Input>
           </CardSection>
         </Card>
@@ -138,12 +131,12 @@ const styles = {
   }
 }
 
-const mapStateToProps = (state) => {
-  const { name, barcode, error, loading } = state.product;
+const mapStateToProps = ({ productReducer }) => {
+  const { product, error, loading } = productReducer;
 
-  return { name, barcode, error, loading };
+  return { product, error, loading };
 };
 
-export default connect(mapStateToProps, { 
-  nameChanged, barcodeChanged, saveNewProduct
+export default connect(mapStateToProps, {
+  saveNewProduct, productUpdate
 }) (NewProductView);

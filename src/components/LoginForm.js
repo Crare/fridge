@@ -1,11 +1,21 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
-import { emailChanged, passwordChanged, loginUser } from '../actions';
+import { emailChanged, passwordChanged, loginUser, signOut } from '../actions';
 import { Card, CardSection, Input, Button, Spinner } from './common';
-
+import { Actions } from 'react-native-router-flux';
+import firebase from 'firebase';
+import { checkUserLoggedIn } from '../actions';
 
 class LoginForm extends Component {
+
+  componentDidMount() {
+    if (this.props.logout) {
+      this.props.signOut();
+    } else {
+      this.props.checkUserLoggedIn();
+    }
+  }
 
   onEmailChange(text) {
     this.props.emailChanged(text);
@@ -45,10 +55,9 @@ class LoginForm extends Component {
     );
   }
 
-  render() {
+  renderInputs() {
     return (
       <Card>
-
         <CardSection>
           <Input
             label="Email"
@@ -67,14 +76,26 @@ class LoginForm extends Component {
             value={this.props.password}
           />
         </CardSection>
-
-        {this.renderError()}
-
-        <CardSection>
-          {this.renderButton()}
-        </CardSection>
-
       </Card>
+    );
+  }
+
+  render() {
+    return (
+      <View>
+
+        {this.renderInputs()}
+
+        <Card>
+
+          {this.renderError()}
+
+          <CardSection>
+            {this.renderButton()}
+          </CardSection>
+
+        </Card>
+      </View>
     );
   }
 }
@@ -92,12 +113,12 @@ const styles = {
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  const { email, password, error, loading } = auth;
+const mapStateToProps = ({ authReducer }) => {
+  const { email, password, error, loading } = authReducer;
 
   return { email, password, error, loading };
 }
 
 export default connect(mapStateToProps, {
-  emailChanged, passwordChanged, loginUser
+  emailChanged, passwordChanged, loginUser, checkUserLoggedIn, signOut
 }) (LoginForm);

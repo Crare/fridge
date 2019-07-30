@@ -5,8 +5,8 @@ import PurchaseReducer from './PurchaseReducer';
 import ProductReducer from './ProductReducer';
 
 export default combineReducers({
-  auth: AuthReducer,
-  fridge: FridgeReducer,
-  purchase: PurchaseReducer,
-  product: ProductReducer
+  authReducer: AuthReducer,
+  fridgeReducer: FridgeReducer,
+  purchaseReducer: PurchaseReducer,
+  productReducer: ProductReducer
 });
