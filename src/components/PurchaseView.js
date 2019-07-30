@@ -3,31 +3,26 @@ import { connect } from 'react-redux';
 import { View, Text, Picker } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Card, CardSection, Input, Button, Spinner, CustomDatePicker } from './common';
-import { fetchProduct, purchaseUpdate, savePurchase } from '../actions';
+import { fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset } from '../actions';
 
 class PurchaseView extends Component {
 
   componentDidMount() {
     if (this.props.product_key) {
       this.props.fetchProduct(this.props.product_key);
+    } else if (this.props.selected_purchase) {
+      this.props.fetchProduct(this.props.selected_purchase.product_key);
+      this.props.fetchPurchase(this.props.selected_purchase.uid);
     }
   }
 
   pressedSave() {
-    const {product, purchase, product_key } = this.props;
+    const { product, purchase, product_key } = this.props;
     
-    this.props.savePurchase({ 
-      name: product.name,
-      barcode: product.barcode,
-      expirationdate: purchase.expirationdate,
-      remindBeforeDate: purchase.remindBeforeDate,
-      amount: purchase.amount,
-      product_key
-    });
+    this.props.savePurchase({ product, purchase, product_key });
   }
 
   reportProduct() {
-    console.log('pressed report product!');
     Actions.report();
   }
 
@@ -62,17 +57,17 @@ class PurchaseView extends Component {
 
     return (
       <Card>
-        <CardSection style={{padding: 15}}>
+        <CardSection style={{padding: 15 }}>
           <Text style={productLabelStyle}>Name: </Text>
           <Text style={productTextStyle}>{name}</Text>
         </CardSection>
         
-        <CardSection style={{padding: 15}}>
+        <CardSection style={{padding: 15 }}>
           <Text style={productLabelStyle}>Barcode: </Text>
           <Text style={productTextStyle}>{barcode}</Text>
         </CardSection>
 
-        <CardSection style={{ padding: 15, marginBottom: 10 }}>
+        <CardSection style={{ padding: 15 }}>
           <Text style={{ width: '50%' }}>
             Wrong or inappropriate product? Report it to fix it:
           </Text>
@@ -114,20 +109,21 @@ class PurchaseView extends Component {
     return (
       <Card>
         <CardSection>
-          <Button style={{ width: '50%'}} onPress={() => Actions.pop()}>Cancel</Button>
-          <Button style={{ width: '50%'}}
-            onPress={this.pressedSave.bind(this)}>
-              Save
-          </Button>
+          <Button style={{ width: '50%'}} onPress={() => this.cancel()}>Cancel</Button>
           {this.renderSaveButton()}
         </CardSection>
       </Card>
     );
   }
 
-  render() {
+  cancel() {
+    this.props.reset();
+    Actions.main({ type: 'reset'});
+  }
 
+  render() {
     const { expirationdate, remindBeforeDate, amount } = this.props.purchase;
+    const { pickerCardStyle, pickerTextStyle } = styles;
 
     return (
       <View>
@@ -149,11 +145,11 @@ class PurchaseView extends Component {
             <Text>Add another purchase by scanning the barcode again, if expiration date is different.</Text>
           </CardSection>
 
-          <CardSection style={{ flexDirection: 'column' }}>
-            <Text style={{ flex: 1 }}>Remind me about expiration:</Text>
-            <Picker style={{ flex: 1 }}
+          <CardSection style={pickerCardStyle}>
+            <Text style={pickerTextStyle}>Remind me about the expiration:</Text>
+            <Picker 
               selectedValue={remindBeforeDate}
-              onValueChange={value => this.props.purchaseUpdate({ prop: 'remindBeforeDate', value })}
+              onValueChange={value => this.props.purchaseUpdate({ prop: 'remindBeforeDate',  value })}
             >
               <Picker.Item label="On expiration day" value="0" />
               <Picker.Item label="1 day before" value="1" />
@@ -174,6 +170,7 @@ class PurchaseView extends Component {
               placeholder="1 piece, 2 pieces, etc..."
               onValueChange={value => this.props.purchaseUpdate({ prop: 'amount', value })}
               value={amount}
+              keyboardType="numeric"
             />
           </CardSection>
 
@@ -195,6 +192,13 @@ const styles = {
   productTextStyle: {
     flex: 2,
     fontSize: 18
+  },
+  pickerCardStyle: {
+    flexDirection: 'column'
+  },
+  pickerTextStyle: {
+    fontSize: 18,
+    paddingLeft: 20
   }
 }
 
@@ -214,4 +218,6 @@ const mapStateToProps = (state) => {
 };
 
 
-export default connect(mapStateToProps, { fetchProduct, purchaseUpdate, savePurchase }) (PurchaseView);
+export default connect(mapStateToProps, { 
+  fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset
+}) (PurchaseView);

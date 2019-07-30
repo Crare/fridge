@@ -3,7 +3,8 @@ import {
   PRODUCT_SAVING,
   PRODUCT_SAVE_SUCCESS,
   PRODUCT_FETCHING,
-  PRODUCT_FETCH_SUCCESS
+  PRODUCT_FETCH_SUCCESS,
+  RESET
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -28,6 +29,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case PRODUCT_FETCH_SUCCESS:
       return { ...state, loading: false, product: action.payload };
+    case RESET:
+      return INITIAL_STATE;
     default:
       return state;
   }

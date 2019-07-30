@@ -3,8 +3,6 @@ import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { emailChanged, passwordChanged, loginUser, signOut } from '../actions';
 import { Card, CardSection, Input, Button, Spinner } from './common';
-import { Actions } from 'react-native-router-flux';
-import firebase from 'firebase';
 import { checkUserLoggedIn } from '../actions';
 
 class LoginForm extends Component {

@@ -84,7 +84,6 @@ const styles = {
 
 const mapStateToProps = state => {
 
-  console.log('mapStateToProps, state:', state);
   if (state.fridgeReducer) {
     const purchases = Object.keys(state.fridgeReducer)
       .map( 

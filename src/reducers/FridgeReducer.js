@@ -14,7 +14,7 @@ export default (state = INITIAL_STATE, action) => {
     case PURCHASES_FETCH_SUCCESS:
       return action.payload;
     case PURCHASES_FETCHING:
-        return { ...state, loading: true };
+      return { ...state, loading: true };
     default:
       return state;
   }

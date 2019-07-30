@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { View, Text } from 'react-native';
 import { Card, CardSection, Input, Button, ToggleButton, TextLink, Spinner } from './common';
 import { Actions } from 'react-native-router-flux';
-import { saveNewProduct, productUpdate } from '../actions';
+import { saveNewProduct, productUpdate, reset } from '../actions';
 
 class NewProductView extends Component {
 
@@ -54,7 +54,7 @@ class NewProductView extends Component {
     return (
       <Card>
         <CardSection>
-          <Button style={{ width: '50%'}} onPress={() => Actions.pop()}>Cancel</Button>
+          <Button style={{ width: '50%'}} onPress={() => this.cancel()}>Cancel</Button>
           <Button style={{ width: '50%'}}
             disabled={!this.state.canSave} 
             onPress={this.pressedSave.bind(this)}>
@@ -63,6 +63,11 @@ class NewProductView extends Component {
         </CardSection>
       </Card>
     );
+  }
+
+  cancel() {
+    this.props.reset();
+    Actions.main({ type: 'reset'});
   }
 
   render() {
@@ -138,5 +143,5 @@ const mapStateToProps = ({ productReducer }) => {
 };
 
 export default connect(mapStateToProps, {
-  saveNewProduct, productUpdate
+  saveNewProduct, productUpdate, reset
 }) (NewProductView);

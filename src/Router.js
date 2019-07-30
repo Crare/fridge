@@ -1,13 +1,12 @@
 import React from 'react';
 import { Scene, Router, Actions } from 'react-native-router-flux';
-import { connect } from 'react-redux';
+import { View } from 'react-native';
 import LoginForm from './components/LoginForm';
 import Fridge from './components/Fridge';
 import NewProductView from './components/NewProductView';
 import PurchaseView from './components/PurchaseView';
 import RulesView from './components/RulesView';
 import ReportView from './components/ReportView';
-import { signOut } from './actions';
 
 const RouterComponent = () => {
 
@@ -39,11 +38,15 @@ const RouterComponent = () => {
           key="newProduct"
           component={NewProductView}
           title="New Product"
+          init="true"
+          renderBackButton={()=>(<View />)}
         />
         <Scene
           key="purchase"
           component={PurchaseView}
           title="Purchase"
+          init="true"
+          renderBackButton={()=>(<View />)}
         />
         <Scene
           key="rules"

@@ -22,9 +22,12 @@ class FridgeListItem extends Component {
   onRowPress() {
     console.log(this.props.purchase);
     // Actions.employeeEdit({ purchase: this.props.purchase });
+
+    Actions.purchase({ selected_purchase: this.props.purchase });
   }
 
   render() {
+    console.log(this.props);
     const { name, expirationdate, amount } = this.props.purchase;
     const { containerStyle, titleStyle, expirationStyle, piecesStyle } = styles;
 
@@ -39,7 +42,7 @@ class FridgeListItem extends Component {
               {name}
             </Text>
             <Text style={piecesStyle}>
-              {amount} pcs
+              {amount}
             </Text>
           </CardSection>
         </View>
