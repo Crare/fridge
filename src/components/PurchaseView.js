@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, Picker } from 'react-native';
+import { View, ScrollView, Text, Picker } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Card, CardSection, Input, Button, Spinner, CustomDatePicker } from './common';
-import { fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset } from '../actions';
+import { fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset, deletePurchase } from '../actions';
 
 class PurchaseView extends Component {
 
@@ -60,6 +60,10 @@ class PurchaseView extends Component {
     );
   }
 
+  deletePurchase() {
+    this.props.deletePurchase(this.props.purchase.uid);
+  }
+
   renderProduct() {
     if (this.props.productLoading) {
       return this.spinner();
@@ -113,6 +117,7 @@ class PurchaseView extends Component {
       </Button>
     );
   }
+
   renderButtons() {
     if (this.props.purchaseLoading) {
       return this.spinner();
@@ -121,12 +126,22 @@ class PurchaseView extends Component {
     }
     
     return (
-      <Card>
-        <CardSection>
-          <Button style={{ width: '50%'}} onPress={() => this.cancel()}>Cancel</Button>
-          {this.renderSaveButton()}
-        </CardSection>
-      </Card>
+      <View style={{ flex: 1 }}>
+
+        <Card>
+          <CardSection>
+            <Button style={{ width: '50%'}} onPress={() => this.cancel()}>Cancel</Button>
+            {this.renderSaveButton()}
+          </CardSection>
+        </Card>
+        
+        <Card>
+          <CardSection>
+            <Button onPress={() => this.deletePurchase()}>Delete Purchase</Button>
+          </CardSection>
+        </Card>
+
+      </View>
     );
   }
 
@@ -140,7 +155,7 @@ class PurchaseView extends Component {
     const { pickerCardStyle, pickerTextStyle } = styles;
 
     return (
-      <View>
+      <ScrollView>
 
         {this.renderProduct()}
 
@@ -192,7 +207,7 @@ class PurchaseView extends Component {
 
         {this.renderButtons()}
         
-      </View>
+      </ScrollView>
     );
   };
 }
@@ -233,5 +248,5 @@ const mapStateToProps = (state) => {
 
 
 export default connect(mapStateToProps, { 
-  fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset
+  fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset, deletePurchase
 }) (PurchaseView);

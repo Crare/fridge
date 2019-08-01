@@ -18,6 +18,8 @@ export const PURCHASE_SAVING = 'purchase_saving';
 export const PURCHASE_SAVE_SUCCESS = 'purchase_save_success';
 export const PURCHASE_FETCHING = "purchase_fetching";
 export const PURCHASE_FETCH_SUCCESS = "purchase_fetch_success";
+export const PURCHASE_DELETING = 'purchase_deleting';
+export const PURCHASE_DELETE_SUCCESS = 'purchase_delete_success';
 
 // product
 export const PRODUCT_UPDATE = 'product_update';

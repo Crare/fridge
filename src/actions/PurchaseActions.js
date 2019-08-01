@@ -5,7 +5,10 @@ import {
   PURCHASE_SAVING,
   PURCHASE_SAVE_SUCCESS,
   PURCHASE_FETCHING,
-  PURCHASE_FETCH_SUCCESS
+  PURCHASE_FETCH_SUCCESS,
+  PURCHASE_DELETING,
+  PURCHASE_DELETE_SUCCESS,
+  RESET
 } from './types';
 
 export const purchaseUpdate = ({ prop, value }) => {
@@ -60,13 +63,31 @@ export const fetchPurchase = (purchase_uid) => {
 
   return (dispatch) => {
     dispatch({ type: PURCHASE_FETCHING });
+
     firebase.database().ref(`/users/${currentUser.uid}/purchases/${purchase_uid}`)
       .on('value', snapshot => { // is called whenever value is changed
         let purchase = snapshot.val();
-        purchase.uid = purchase_uid;
-        dispatch({ type: PURCHASE_FETCH_SUCCESS, payload:  purchase });
+        if (purchase) {
+          purchase.uid = purchase_uid;
+          dispatch({ type: PURCHASE_FETCH_SUCCESS, payload:  purchase });
+        }
       });
   };
+}
+
+export const deletePurchase = (purchase_uid) => {
+  const { currentUser } = firebase.auth();
+
+  return (dispatch) => {
+    dispatch({ type: PURCHASE_DELETING });
+
+    firebase.database().ref(`/users/${currentUser.uid}/purchases/${purchase_uid}`)
+      .remove().then(() => {
+        dispatch({ type: PURCHASE_DELETE_SUCCESS });
+        dispatch({ type: RESET });
+        Actions.main({ type: 'reset' });
+      });
+  }
 }
 
 /**
