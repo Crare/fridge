@@ -1,7 +1,8 @@
 import firebase from 'firebase';
 import {
   PURCHASES_FETCH_SUCCESS,
-  PURCHASES_FETCHING
+  PURCHASES_FETCHING,
+  PURCHASES_FETCH_NO_RESULTS
 } from './types';
 
 Date.prototype.addDays = function(days) {
@@ -15,10 +16,25 @@ export const fetchPurchases = () => {
   
   return (dispatch) => {
     dispatch({type: PURCHASES_FETCHING });
-    
-    firebase.database().ref(`/users/${currentUser.uid}/purchases`).orderByChild('expirationDateInMs')
-      .on('value', snapshot => { // is called whenever value is changed
-        dispatch({ type: PURCHASES_FETCH_SUCCESS, payload: snapshot.val() });
-      });
+
+    firebase.firestore().collection('purchases').where('userId', '==', currentUser.uid)
+      .get()
+      .then(function(querySnapshot) {
+        if(querySnapshot.empty) {
+          console.log('empty result');
+          dispatch({ type: PURCHASES_FETCH_NO_RESULTS });
+        } else {
+          let purchases = [];
+          querySnapshot.forEach(function(doc) {
+            let purchase = doc.data();
+            purchase.id = doc.id;
+            purchases.push(purchase);
+          });
+          dispatch({ type: PURCHASES_FETCH_SUCCESS, payload: { purchases } });
+        }
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
   };
 };

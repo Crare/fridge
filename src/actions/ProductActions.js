@@ -1,11 +1,15 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase';
+import 'firebase/firestore';
 import { Actions } from 'react-native-router-flux';
 import {
   PRODUCT_SAVING,
   PRODUCT_SAVE_SUCCESS,
   PRODUCT_FETCHING,
   PRODUCT_FETCH_SUCCESS,
-  PRODUCT_UPDATE
+  PRODUCT_UPDATE,
+  PRODUCT_SEARCHING,
+  PRODUCT_SEARCH_NO_RESULTS,
+  PRODUCT_SEARCH_GOT_RESULT
 } from './types';
 
 export const productUpdate = ({ prop, value }) => {
@@ -21,27 +25,49 @@ export const saveNewProduct = ({ name, barcode }) => {
   return (dispatch) => {
     dispatch({ type: PRODUCT_SAVING });
 
-    let productObject = firebase.database().ref(`/products`).push();
-
-    productObject.set({ name, barcode, user_uid: currentUser.uid })
-      .then(() => {
-        dispatch({ type: PRODUCT_SAVE_SUCCESS });
-        Actions.purchase({ product_key: productObject.getKey() });
-      });
+    firebase.firestore().collection('products').add({ name, barcode }).then((docRef) => {
+      dispatch({ type: PRODUCT_SAVE_SUCCESS });
+      Actions.purchase({ productId: docRef.id });
+    }).catch((error) => {
+      console.error("Error adding document: ", error);
+    });
   };
 }
 
-export const fetchProduct = (product_key) => {
-  const { currentUser } = firebase.auth();
-
+export const fetchProduct = (productId) => {
   return (dispatch) => {
     dispatch({ type: PRODUCT_FETCHING });
 
-    firebase.database().ref(`/products/${product_key}`)
-      .on('value', snapshot => { // is called whenever value is changed
-        let product = snapshot.val();
-        product.uid = product_key;
-        dispatch({ type: PRODUCT_FETCH_SUCCESS, payload: product });
-      });
+    firebase.firestore().collection("products").doc(productId)
+    .onSnapshot(function(doc) {
+      let product = doc.data();
+      product.id = doc.id;
+      dispatch({ type: PRODUCT_FETCH_SUCCESS, payload: product });
+    });
+  };
+}
+
+export const searchProductByBarcode = (barcode) => {
+
+  return (dispatch) => {
+    dispatch({ type: PRODUCT_SEARCHING });
+
+    firebase.firestore().collection('products').where('barcode', '==', barcode)
+      .get()
+      .then(function(querySnapshot) {
+        if (querySnapshot.empty) {
+          dispatch({ type: PRODUCT_SEARCH_NO_RESULTS, payload: barcode });
+          Actions.newProduct();
+        } else {
+          let product = querySnapshot.docs[0].data();
+          product.id = querySnapshot.docs[0].id;
+          dispatch({ type: PRODUCT_SEARCH_GOT_RESULT, payload: product });
+          Actions.purchase({ productId: product.id });
+        }
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+    });
+
   };
 }

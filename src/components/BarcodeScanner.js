@@ -1,45 +1,83 @@
-import React, {Component} from 'react';
-import {
-  Text, View, Alert, TouchableOpacity, Image
-}from 'react-native';
-import Camera from 'react-native-camera';
+import React, { Component } from 'react';
+import { View, Text } from 'react-native';
+import { connect } from 'react-redux';
+import { RNCamera } from 'react-native-camera';
+import { searchProductByBarcode } from '../actions';
+import { Spinner } from './common';
 
 class BarcodeScanner extends Component {
 
-  state = { torchOn: false };
-  
-  onBarCodeRead = (event) => {
-    Alert.alert("Barcode value is: "+event.data ,"Barcode type is: "+event.type);
+  state = { foundBarcode: null };
+
+  // componentDidMount() {
+  //   const { navigation } = this.props;
+  //   navigation.addListener('willFocus', () =>
+  //     this.setState({ focusedScreen: true })
+  //   );
+  //   navigation.addListener('willBlur', () =>
+  //     this.setState({ focusedScreen: false })
+  //   );
+  // }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.props.searchProductByBarcode('123123'); // '6415600550390');
+    }, 1000);
   }
 
-  render() {
-    const { container, preview, bottomOverlay, cameraIcon } = styles;
-    const { torchOn } = this.state;
+  onBarCodeRead(event) {
+    console.warn(event.data);
+    this.setState({ foundBarcode: event.data });
+    this.props.searchProductByBarcode(event.data);
+  }
+
+  renderCamera() {
+    const { foundBarcode } = this.state;
+    const { preview } = styles;
+
+    if(foundBarcode) {
+      return;
+    }
 
     return (
-      <View style={container}>
-        <Camera
+      <RNCamera
+          ref={cam => {
+            this.camera = cam;
+          }}
           style={preview}
-          torchMode={torchOn}
           onBarCodeRead={event => this.onBarCodeRead(event)}
-          ref={cam => this.camera = cam}
+          captureAudio={false}
         >
-          <Text style={{ backgroundColor: 'white' }}>
-            BARCODE SCANNER
-          </Text>
-        </Camera>
-
-        <View style={bottomOverlay}>
-          <TouchableOpacity onPress={() => this.setState({ torchOn: !this.state.torchOn })}>
-            <Image style={cameraIcon}
-              source={torchOn ? require('../images/flash_on.png') : require('../images/flash_off.png')} />
-          </TouchableOpacity>
-        </View>
-
-      </View>
-    )
+      </RNCamera>
+    );
   }
-  
+
+  renderFoundBarcode() {
+    const { foundBarcode } = this.state;
+
+    if (foundBarcode) {
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          <Text>Found barcode: {foundBarcode}</Text>
+          <Text>Searching for product...</Text>
+          <Spinner />
+        </View>
+      );
+    }
+  }
+ 
+  render() {
+    // TODO: add flashmode
+    const { container } = styles;
+    
+    return (
+      <View style={container}>
+        {this.renderCamera()}
+
+        {this.renderFoundBarcode()}
+      </View>
+    );
+  }
 }
 
 const styles = {
@@ -51,19 +89,8 @@ const styles = {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center'
-  },
-  cameraIcon: {
-    margin: 5,
-    height: 40,
-    width: 40
-  },
-  bottomOverlay: {
-    position: "absolute",
-    width: "100%",
-    flex: 20,
-    flexDirection: "row",
-    justifyContent: "space-between"
   }
 }
 
- export { BarcodeScanner };
+ export default connect(null, { searchProductByBarcode }) (BarcodeScanner);
+ 

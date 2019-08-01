@@ -11,6 +11,7 @@ export const NO_USER_LOGGED_IN = 'no_user_logged_in';
 //fridge
 export const PURCHASES_FETCH_SUCCESS = 'purchases_fetch_success';
 export const PURCHASES_FETCHING = 'purchases_fetching';
+export const PURCHASES_FETCH_NO_RESULTS = 'purchase_fetch_no_results';
 
 // purchase
 export const PURCHASE_UPDATE = 'purchase_update';
@@ -27,6 +28,9 @@ export const PRODUCT_SAVING = 'product_saving';
 export const PRODUCT_SAVE_SUCCESS = 'product_save_success';
 export const PRODUCT_FETCHING = 'product_fetching';
 export const PRODUCT_FETCH_SUCCESS = 'product_fetch_success';
+export const PRODUCT_SEARCHING = 'product_searching';
+export const PRODUCT_SEARCH_NO_RESULTS = 'product_search_no_results';
+export const PRODUCT_SEARCH_GOT_RESULT = 'product_search_got_result';
 
 // report
 export const REPORT_UPDATE = 'report_update';

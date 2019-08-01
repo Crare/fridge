@@ -13,12 +13,13 @@ export const reportUpdate = ({ prop, value }) => {
   };
 };
 
-export const sendReport = ({name, barcode, originalName, originalBarcode, product_key }) => {
+export const sendReport = ({name, barcode, originalName, originalBarcode, productId }) => {
   const { currentUser } = firebase.auth();
 
   return (dispatch) => {
     dispatch({ type: REPORT_SAVING });
 
+    // TODO: send report
     let reportObject = firebase.database().ref(`/reports`).push();
 
     reportObject.set({ 
@@ -26,9 +27,9 @@ export const sendReport = ({name, barcode, originalName, originalBarcode, produc
       barcode, 
       originalName,
       originalBarcode,
-      product_key,
-      user_uid: currentUser.uid,
-      send_date: new Date()
+      productId,
+      userId: currentUser.uid,
+      sendDate: new Date()
     }).then(() => {
       dispatch({ type: REPORT_SAVE_SUCCESS });
       Actions.main({ type: 'reset' });

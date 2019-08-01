@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+// import '@firebase/auth';
 import { Actions } from 'react-native-router-flux';
 import {
   EMAIL_CHANGED,

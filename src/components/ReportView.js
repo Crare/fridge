@@ -10,8 +10,8 @@ class ReportView extends Component {
   state = { canSave: false };
 
   componentDidMount() {
-    if (this.props.product_key) {
-      this.props.fetchProduct(this.props.product_key);
+    if (this.props.productId) {
+      this.props.fetchProduct(this.props.productId);
     }
   }
 
@@ -49,7 +49,7 @@ class ReportView extends Component {
       barcode,
       originalName: product.name,
       originalBarcode: product.barcode,
-      product_key: product.uid
+      productId: product.id
     })
   }
 

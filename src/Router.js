@@ -7,7 +7,7 @@ import NewProductView from './components/NewProductView';
 import PurchaseView from './components/PurchaseView';
 import RulesView from './components/RulesView';
 import ReportView from './components/ReportView';
-import { BarcodeScanner } from './components/BarcodeScanner';
+import BarcodeScanner from './components/BarcodeScanner';
 
 const RouterComponent = () => {
 

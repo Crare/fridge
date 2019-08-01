@@ -7,26 +7,12 @@ import { fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset, delet
 
 class PurchaseView extends Component {
 
-  /**
-   * dateString in format 'dd.MM.YYYY'
-   */
-  createDate(dateString) {
-    if (!dateString || dateString.constructor.name === 'Date') {
-      return dateString;
-    }
-    const day = dateString.substring(0,2);
-    const month = dateString.substring(3,5);
-    const year = dateString.substring(6,10);
-    
-    return new Date(`${year}-${month}-${day}`);
-  }
-
   componentDidMount() {
-    if (this.props.product_key) {
-      this.props.fetchProduct(this.props.product_key);
+    if (this.props.productId) {
+      this.props.fetchProduct(this.props.productId);
     } else if (this.props.selected_purchase) {
-      this.props.fetchProduct(this.props.selected_purchase.product_key);
-      this.props.fetchPurchase(this.props.selected_purchase.uid);
+      this.props.fetchProduct(this.props.selected_purchase.productId);
+      this.props.fetchPurchase(this.props.selected_purchase.id);
     }
   }
 
@@ -37,7 +23,7 @@ class PurchaseView extends Component {
   }
 
   reportProduct() {
-    Actions.report({ product_key: this.props.product.uid });
+    Actions.report({ productId: this.props.product.id });
   }
 
   spinner() {
@@ -61,7 +47,7 @@ class PurchaseView extends Component {
   }
 
   deletePurchase() {
-    this.props.deletePurchase(this.props.purchase.uid);
+    this.props.deletePurchase(this.props.purchase.id);
   }
 
   renderProduct() {
@@ -119,7 +105,7 @@ class PurchaseView extends Component {
   }
 
   renderDeleteButton() {
-    if (this.props.purchase.uid) {
+    if (this.props.purchase.id) {
       return (
         <Card>
           <CardSection>
@@ -172,7 +158,7 @@ class PurchaseView extends Component {
           <CardSection>
             <CustomDatePicker
             label="Expiration date:" 
-            date={this.createDate(expirationDate)}
+            date={expirationDate}
             minDate={new Date()}
             dateChanged={value => this.props.purchaseUpdate({ prop: 'expirationDate', value })}
             />

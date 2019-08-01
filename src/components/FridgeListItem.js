@@ -6,23 +6,9 @@ import { CardSection } from './common';
  
 class FridgeListItem extends Component {
 
-  /**
-   * dateString in format 'dd.MM.YYYY'
-   */
-  createDate(dateString) {
-    if (!dateString || dateString.constructor.name === 'Date') {
-      return dateString;
-    }
-    const day = dateString.substring(0,2);
-    const month = dateString.substring(3,5);
-    const year = dateString.substring(6,10);
-
-    return new Date(`${year}-${month}-${day}`);
-  }
-
   calculateExpirationDays(expirationDate) {
     const a = moment(new Date());
-    const b = moment(this.createDate(expirationDate));
+    const b = moment(new Date(expirationDate));
     const days = b.diff(a, 'days');
     const dayText = Math.abs(days) == 1 ? 'day' : 'days';
 
@@ -39,6 +25,7 @@ class FridgeListItem extends Component {
   }
 
   render() {
+    console.log(this.props);
     const { name, expirationDate, amount } = this.props.purchase;
     const { containerStyle, titleStyle, expirationStyle, piecesStyle } = styles;
 

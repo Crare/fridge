@@ -24,69 +24,79 @@ export const savePurchase = ({ product, purchase }) => {
   return (dispatch) => {
     dispatch({ type: PURCHASE_SAVING });
 
-    if (purchase.uid) {
+    if (purchase.id) {
       // existing purchase
-      var updates = {};
-      updates[`/users/${currentUser.uid}/purchases/${purchase.uid}/expirationDate`] = purchase.expirationDate;
-      updates[`/users/${currentUser.uid}/purchases/${purchase.uid}/expirationDateInMs`] = createDate(purchase.expirationDate).getTime();
-      updates[`/users/${currentUser.uid}/purchases/${purchase.uid}/remindBeforeDate`] = purchase.remindBeforeDate;
-      updates[`/users/${currentUser.uid}/purchases/${purchase.uid}/amount`] = purchase.amount;
-      
-      firebase.database().ref().update(updates).then(() => {
+      let updatableValues = {};
+      updatableValues.amount = purchase.amount;
+      updatableValues.expirationDate = purchase.expirationDate;
+      updatableValues.expirationDateInMs = purchase.expirationDate.getTime();
+      updatableValues.remindBeforeDate = purchase.remindBeforeDate;
+
+      let collection = firebase.firestore().collection('purchases').doc(purchase.id);
+
+      firebase.firestore().batch().update(collection, updatableValues).commit()
+      .then(() => {
         dispatch({ type: PURCHASE_SAVE_SUCCESS });
         Actions.main({ type: 'reset' });
       });
+
     } else {
       // new purchase
-      let purchase_ = {
+      let new_purchase = {
         name: product.name,
         barcode: product.barcode,
         expirationDate: purchase.expirationDate,
-        expirationDateInMs: createDate(purchase.expirationDate).getTime(),
+        expirationDateInMs: purchase.expirationDate.getTime(),
         remindBeforeDate: purchase.remindBeforeDate,
         amount: purchase.amount,
-        product_key: product.uid
+        productId: product.id,
+        userId: currentUser.uid
       };
 
-      firebase.database().ref(`/users/${currentUser.uid}/purchases/`)
-        .push()
-        .set(purchase_).then(()=> {
-          dispatch({ type: PURCHASE_SAVE_SUCCESS });
-          Actions.main({ type: 'reset' });
-        });
+      firebase.firestore().collection('purchases').add(new_purchase).then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+        dispatch({ type: PURCHASE_SAVE_SUCCESS });
+        Actions.main({ type: 'reset' });
+      }).catch((error) => {
+        console.error("Error adding document: ", error);
+        // TODO: handle error
+        // dispatch({ type: PURCHASE_SAVE_ERROR });
+      });
     }
   };
 }
 
-export const fetchPurchase = (purchase_uid) => {
+export const fetchPurchase = (purchaseId) => {
   const { currentUser } = firebase.auth();
 
   return (dispatch) => {
     dispatch({ type: PURCHASE_FETCHING });
 
-    firebase.database().ref(`/users/${currentUser.uid}/purchases/${purchase_uid}`)
-      .on('value', snapshot => { // is called whenever value is changed
-        let purchase = snapshot.val();
-        if (purchase) {
-          purchase.uid = purchase_uid;
-          dispatch({ type: PURCHASE_FETCH_SUCCESS, payload:  purchase });
-        }
-      });
+    firebase.firestore().collection("purchases").doc(purchaseId)
+    .onSnapshot(function(doc) {
+      if (doc.exists) {
+        let purchase = doc.data();
+        purchase.id = doc.id;
+        dispatch({ type: PURCHASE_FETCH_SUCCESS, payload: purchase });
+      }
+    });
   };
 }
 
-export const deletePurchase = (purchase_uid) => {
+export const deletePurchase = (purchaseId) => {
   const { currentUser } = firebase.auth();
 
   return (dispatch) => {
     dispatch({ type: PURCHASE_DELETING });
 
-    firebase.database().ref(`/users/${currentUser.uid}/purchases/${purchase_uid}`)
-      .remove().then(() => {
-        dispatch({ type: PURCHASE_DELETE_SUCCESS });
-        dispatch({ type: RESET });
-        Actions.main({ type: 'reset' });
-      });
+    let purchaseRef = firebase.firestore().collection('purchases').doc(purchaseId);
+    firebase.firestore().batch().delete(purchaseRef).commit()
+    .then(() => {
+      dispatch({ type: PURCHASE_DELETE_SUCCESS });
+      dispatch({ type: RESET });
+      Actions.main({ type: 'reset' });
+    });
+
   }
 }
 

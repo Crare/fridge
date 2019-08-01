@@ -12,6 +12,7 @@ class Fridge extends Component {
 
   componentDidMount() {
     this.props.fetchPurchases();
+    // TODO: handle empty results
   }
 
   renderItem = ({ item }) => {
@@ -19,7 +20,7 @@ class Fridge extends Component {
   }
 
   scanBarcode() {
-    const isSimulator = true; // TODO: check device if simulator
+    const isSimulator = false; // TODO: check device if simulator
 
     if (isSimulator) { // DeviceInfo.isEmulator()) {
       Actions.newProduct();
@@ -43,13 +44,21 @@ class Fridge extends Component {
         </Text>
       );
     }
+    if (!purchases || purchases.length <= 0) {
+      return (
+        <View style={container}> 
+          <Text style={{ padding: 10 }}>Fridge is empty. Add items to the fridge by scanning a barcode on the product.</Text>
+        </View>
+      );
+    }
+    console.log(purchases);
     return (
       <View style={container}> 
         <Text style={{ padding: 10 }}>Fridge contains:</Text>
 
         <FlatList style={{ margin: 10 }}
           data={purchases}
-          keyExtractor={ (purchase) => purchase.uid }
+          keyExtractor={ (purchase) => purchase.id }
           renderItem={this.renderItem}
         />
       </View>
@@ -89,17 +98,15 @@ const styles = {
 
 
 const mapStateToProps = state => {
-
-  if (state.fridgeReducer) {
-    const purchases = Object.keys(state.fridgeReducer)
-      .map( 
-        uid => ({ ...state.fridgeReducer[uid], uid })
+  console.log(state.fridgeReducer);
+  if (state.fridgeReducer.purchases) {
+    const { purchases } = state.fridgeReducer;
+    purchases.map( 
+      index => ({ ...state.fridgeReducer[index], index })
     );
     return { purchases };
   }
-  
   return {};
-
 };
 
 export default connect(mapStateToProps, { fetchPurchases })(Fridge);
