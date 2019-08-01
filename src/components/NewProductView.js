@@ -9,10 +9,6 @@ class NewProductView extends Component {
 
   state = { canSave: false };
 
-  pressedLink() {
-    Actions.rules();
-  }
-
   pressedSave() {
     if (!this.state.canSave) {
       return;
@@ -20,10 +16,6 @@ class NewProductView extends Component {
     const { name, barcode } = this.props.product;
 
     this.props.saveNewProduct({ name, barcode });
-  }
-
-  showRulesAndGuidelines() {
-    Actions.rules();
   }
 
   renderError() {
@@ -70,6 +62,27 @@ class NewProductView extends Component {
     Actions.popTo('fridge');
   }
 
+  renderRulesAgreement() {
+    return (
+      <Card>
+        <CardSection style={{ padding: 15 }}>
+          <View style={{ width: '50%', flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Text>I have read the </Text>
+            <TextLink onPress={() => Actions.rules()}>rules and guidelines </TextLink>
+            <Text>and I am adding a real appropriate product.</Text>
+          </View>
+
+          <ToggleButton
+            style={{ width: '50%', height: 40, margin: 'auto', alignSelf: 'flex-end' }} 
+            onPress={() => this.setState({canSave: !this.state.canSave})} 
+            toggled={this.state.canSave}>
+              Yes, I understand
+          </ToggleButton>
+        </CardSection>
+      </Card>
+    );
+  }
+
   render() {
     const { name, barcode } = this.props.product;
 
@@ -96,22 +109,7 @@ class NewProductView extends Component {
           </CardSection>
         </Card>
         
-        <Card>
-          <CardSection style={{ padding: 15 }}>
-            <View style={{ width: '50%', flexDirection: 'row', flexWrap: 'wrap' }}>
-             <Text>I have read the </Text>
-             <TextLink onPress={this.showRulesAndGuidelines.bind(this)}>rules and guidelines </TextLink>
-             <Text>and I am adding a real appropriate product.</Text>
-            </View>
-
-            <ToggleButton
-              style={{ width: '50%', height: 40, margin: 'auto', alignSelf: 'flex-end' }} 
-              onPress={() => this.setState({canSave: !this.state.canSave})} 
-              toggled={this.state.canSave}>
-                Yes, I understand
-            </ToggleButton>
-          </CardSection>
-        </Card>
+        {this.renderRulesAgreement()}
 
         {this.renderButtons()}
 

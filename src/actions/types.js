@@ -28,4 +28,10 @@ export const PRODUCT_SAVE_SUCCESS = 'product_save_success';
 export const PRODUCT_FETCHING = 'product_fetching';
 export const PRODUCT_FETCH_SUCCESS = 'product_fetch_success';
 
+// report
+export const REPORT_UPDATE = 'report_update';
+export const REPORT_SAVING = 'report_saving';
+export const REPORT_SAVE_SUCCESS = 'report_save_success';
+
+
 export const RESET = 'reset';

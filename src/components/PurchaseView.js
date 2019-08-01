@@ -37,7 +37,7 @@ class PurchaseView extends Component {
   }
 
   reportProduct() {
-    Actions.report();
+    Actions.report({ product_key: this.props.product.uid });
   }
 
   spinner() {
