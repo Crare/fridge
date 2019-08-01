@@ -118,6 +118,18 @@ class PurchaseView extends Component {
     );
   }
 
+  renderDeleteButton() {
+    if (this.props.purchase.uid) {
+      return (
+        <Card>
+          <CardSection>
+            <Button onPress={() => this.deletePurchase()}>Delete Purchase</Button>
+          </CardSection>
+        </Card>
+      );
+    }
+  }
+
   renderButtons() {
     if (this.props.purchaseLoading) {
       return this.spinner();
@@ -134,12 +146,8 @@ class PurchaseView extends Component {
             {this.renderSaveButton()}
           </CardSection>
         </Card>
-        
-        <Card>
-          <CardSection>
-            <Button onPress={() => this.deletePurchase()}>Delete Purchase</Button>
-          </CardSection>
-        </Card>
+
+        {this.renderDeleteButton()}
 
       </View>
     );
