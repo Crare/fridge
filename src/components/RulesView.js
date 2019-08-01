@@ -1,17 +1,24 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Clipboard } from 'react-native';
 import { Card, CardSection, Button } from './common';
 import { Actions } from 'react-native-router-flux';
 
 
 class RulesView extends Component {
 
-  copyToDevice() {
-    // TODO: copyToDevice
-    console.log('pressed copy to device!');
+  state = { 
+    rulesText: "lorem ipsum dolor anti sant...",
+    guidelinesText: "lorem ipsum dolor anti sant...",
+  };
+
+  copyToClipboard() {
+    const { rulesText, guidelinesText } = this.state;
+    const rulesAndGuidelines = `Rules\r\n${rulesText}\r\n\r\nGuidelines\r\n${guidelinesText}`
+    Clipboard.setString(rulesAndGuidelines);
   }
 
   render() {
+    const { rulesText, guidelinesText } = this.state;
     const { textContainerStyle, titleStyle, textStyle } = styles;
 
     return (
@@ -22,7 +29,7 @@ class RulesView extends Component {
               Rules
             </Text>
             <Text style={textStyle}>
-              lorem ipsum dolor anti sant...
+              {rulesText}
             </Text>
           </CardSection>
         </Card>
@@ -33,7 +40,7 @@ class RulesView extends Component {
               Guidelines
             </Text>
             <Text style={textStyle}>
-              lorem ipsum dolor anti sant...
+              {guidelinesText}
             </Text>
           </CardSection>
         </Card>
@@ -42,7 +49,7 @@ class RulesView extends Component {
         <Card>
           <CardSection>
             <Button onPress={() => Actions.pop()}>Back</Button>
-            <Button onPress={this.copyToDevice.bind(this)}>Copy to device</Button>
+            <Button onPress={this.copyToClipboard.bind(this)}>Copy to clipboard</Button>
           </CardSection>
         </Card>
       </View>
@@ -52,13 +59,11 @@ class RulesView extends Component {
 
 const styles = {
   titleStyle: {
-    // flex: 1,
     fontSize: 22,
     fontWeight: '600',
     paddingBottom: 15
   },
   textStyle: {
-    // flex: 1,
     fontSize: 16,
   },
   textContainerStyle: {
