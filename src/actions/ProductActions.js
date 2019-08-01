@@ -25,7 +25,6 @@ export const saveNewProduct = ({ name, barcode }) => {
 
     productObject.set({ name, barcode, user_uid: currentUser.uid })
       .then(() => {
-        console.log('saveNewProduct success: productObject.key: ', productObject.getKey() );
         dispatch({ type: PRODUCT_SAVE_SUCCESS });
         Actions.purchase({ product_key: productObject.getKey() });
       });
@@ -40,8 +39,9 @@ export const fetchProduct = (product_key) => {
 
     firebase.database().ref(`/products/${product_key}`)
       .on('value', snapshot => { // is called whenever value is changed
-        console.log('fetchProduct, snapshot.val():', snapshot.val());
-        dispatch({ type: PRODUCT_FETCH_SUCCESS, payload: snapshot.val() });
+        let product = snapshot.val();
+        product.uid = product_key;
+        dispatch({ type: PRODUCT_FETCH_SUCCESS, payload: product });
       });
   };
 }

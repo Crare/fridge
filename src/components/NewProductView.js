@@ -67,7 +67,7 @@ class NewProductView extends Component {
 
   cancel() {
     this.props.reset();
-    Actions.main({ type: 'reset'});
+    Actions.popTo('fridge');
   }
 
   render() {

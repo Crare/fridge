@@ -10,8 +10,8 @@ const INITIAL_STATE = {
   loading: false,
   error: '',
   purchase: {
-    expirationdate: null,
-    remindBeforeDate: null,
+    expirationDate: new Date(),
+    remindBeforeDate: 1,
     amount: null
   }
 };

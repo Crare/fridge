@@ -6,11 +6,26 @@ import { CardSection } from './common';
  
 class FridgeListItem extends Component {
 
-  calculateExpirationDays(expirationdate) {
+  /**
+   * dateString in format 'dd.MM.YYYY'
+   */
+  createDate(dateString) {
+    if (!dateString || dateString.constructor.name === 'Date') {
+      return dateString;
+    }
+    const day = dateString.substring(0,2);
+    const month = dateString.substring(3,5);
+    const year = dateString.substring(6,10);
+
+    return new Date(`${year}-${month}-${day}`);
+  }
+
+  calculateExpirationDays(expirationDate) {
     const a = moment(new Date());
-    const b = moment(new Date(expirationdate));
+    const b = moment(this.createDate(expirationDate));
     const days = b.diff(a, 'days');
     const dayText = Math.abs(days) == 1 ? 'day' : 'days';
+
     if (days >= 1) {
       return `expires in ${days} ${dayText}`;
     } else if (days < 0) {
@@ -20,23 +35,19 @@ class FridgeListItem extends Component {
   }
 
   onRowPress() {
-    console.log(this.props.purchase);
-    // Actions.employeeEdit({ purchase: this.props.purchase });
-
     Actions.purchase({ selected_purchase: this.props.purchase });
   }
 
   render() {
-    console.log(this.props);
-    const { name, expirationdate, amount } = this.props.purchase;
+    const { name, expirationDate, amount } = this.props.purchase;
     const { containerStyle, titleStyle, expirationStyle, piecesStyle } = styles;
 
     return (
-      <TouchableWithoutFeedback onPress={this.onRowPress.bind(this)}>
+      <TouchableWithoutFeedback onPress={ () => this.onRowPress()}>
         <View style={containerStyle}>
           <CardSection style={{ flexDirection: 'row' }}>
             <Text style={expirationStyle}>
-              {this.calculateExpirationDays(expirationdate)}
+              {this.calculateExpirationDays(expirationDate)}
             </Text>
             <Text style={titleStyle}>
               {name}

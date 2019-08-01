@@ -16,7 +16,7 @@ export const fetchPurchases = () => {
   return (dispatch) => {
     dispatch({type: PURCHASES_FETCHING });
     
-    firebase.database().ref(`/users/${currentUser.uid}/purchases`)
+    firebase.database().ref(`/users/${currentUser.uid}/purchases`).orderByChild('expirationDateInMs')
       .on('value', snapshot => { // is called whenever value is changed
         dispatch({ type: PURCHASES_FETCH_SUCCESS, payload: snapshot.val() });
       });

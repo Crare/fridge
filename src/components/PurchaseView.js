@@ -7,6 +7,20 @@ import { fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset } from
 
 class PurchaseView extends Component {
 
+  /**
+   * dateString in format 'dd.MM.YYYY'
+   */
+  createDate(dateString) {
+    if (!dateString || dateString.constructor.name === 'Date') {
+      return dateString;
+    }
+    const day = dateString.substring(0,2);
+    const month = dateString.substring(3,5);
+    const year = dateString.substring(6,10);
+    
+    return new Date(`${year}-${month}-${day}`);
+  }
+
   componentDidMount() {
     if (this.props.product_key) {
       this.props.fetchProduct(this.props.product_key);
@@ -17,9 +31,9 @@ class PurchaseView extends Component {
   }
 
   pressedSave() {
-    const { product, purchase, product_key } = this.props;
+    const { product, purchase } = this.props;
     
-    this.props.savePurchase({ product, purchase, product_key });
+    this.props.savePurchase({ product, purchase });
   }
 
   reportProduct() {
@@ -82,12 +96,12 @@ class PurchaseView extends Component {
 
   renderSaveButton() {
     const { purchase } = this.props;
-    let disabled = false;
+    let disabled = true;
 
-    if (purchase.expirationdate 
+    if (purchase.expirationDate 
       && purchase.remindBeforeDate 
       && purchase.amount) {
-      disabled = true;
+      disabled = false;
     }
 
     return (
@@ -118,11 +132,11 @@ class PurchaseView extends Component {
 
   cancel() {
     this.props.reset();
-    Actions.main({ type: 'reset'});
+    Actions.popTo('fridge');
   }
 
   render() {
-    const { expirationdate, remindBeforeDate, amount } = this.props.purchase;
+    const { expirationDate, remindBeforeDate, amount } = this.props.purchase;
     const { pickerCardStyle, pickerTextStyle } = styles;
 
     return (
@@ -135,9 +149,9 @@ class PurchaseView extends Component {
           <CardSection>
             <CustomDatePicker
             label="Expiration date:" 
-            date={expirationdate}
+            date={this.createDate(expirationDate)}
             minDate={new Date()}
-            dateChanged={value => this.props.purchaseUpdate({ prop: 'expirationdate', value })}
+            dateChanged={value => this.props.purchaseUpdate({ prop: 'expirationDate', value })}
             />
           </CardSection>
           
@@ -168,7 +182,7 @@ class PurchaseView extends Component {
           <CardSection>
             <Input label="Amount:" 
               placeholder="1 piece, 2 pieces, etc..."
-              onValueChange={value => this.props.purchaseUpdate({ prop: 'amount', value })}
+              onChangeText={value => this.props.purchaseUpdate({ prop: 'amount', value })}
               value={amount}
               keyboardType="numeric"
             />

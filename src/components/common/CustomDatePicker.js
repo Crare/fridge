@@ -11,8 +11,10 @@ import { View, Text } from 'react-native';
  */
 class CustomDatePicker extends Component {
   
-  parseCurrentDayString() {
-    const date = new Date();
+  parseToDateString(date) {
+    if (date.constructor.name === 'String') {
+      return date;
+    }
     const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
     const month = (date.getMonth()+1) < 10 ? '0' + (date.getMonth()+1) : (date.getMonth()+1);
     const year = date.getFullYear();
@@ -25,11 +27,10 @@ class CustomDatePicker extends Component {
   
   constructor(props){
     super(props)
-    this.state = {date: this.parseCurrentDayString()}
   }
  
   render() {
-    const { label, dateChanged, minDate } = this.props;
+    const { label, dateChanged, minDate, date } = this.props;
     const { labelStyle, containerStyle } = styles;
     
     return (
@@ -37,17 +38,16 @@ class CustomDatePicker extends Component {
         <Text style={labelStyle}>{label}</Text>
         <DatePicker
           style={{width: 200}}
-          date={this.state.date}
+          date={date}
           mode="date"
           minDate={minDate}
-          placeholder="placeholder"
           format="DD.MM.YYYY"
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
           customStyles={{
             // ... You can check the source to find the other keys.
           }}
-          onDateChange={ (date) => { this.setState({date: date}); dateChanged(date); } }
+          onDateChange={ (date_value) => { this.setState({date: date_value}); dateChanged(this.parseToDateString(date_value)); } }
         />
       </View>
     )
