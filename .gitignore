@@ -60,3 +60,5 @@ buck-out/
 
 # own
 src/firebaseConfig.json
+
+/ios/fridge.xcodeproj/project.pbxproj
