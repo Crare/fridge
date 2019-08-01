@@ -7,6 +7,7 @@ import NewProductView from './components/NewProductView';
 import PurchaseView from './components/PurchaseView';
 import RulesView from './components/RulesView';
 import ReportView from './components/ReportView';
+import { BarcodeScanner } from './components/BarcodeScanner';
 
 const RouterComponent = () => {
 
@@ -33,19 +34,21 @@ const RouterComponent = () => {
           leftTitle="Logout"
           onLeft={ () => Actions.auth({ logout: true, type: 'reset' }) }
         />
-        {/* renderBackButton={() => this.renderBackButton()} */}
+        <Scene 
+          key="barcodeScanner"
+          component={BarcodeScanner}
+          title="Scan Barcode"
+        />
         <Scene
           key="newProduct"
           component={NewProductView}
           title="New Product"
-          init="true"
           renderBackButton={()=>(<View />)}
         />
         <Scene
           key="purchase"
           component={PurchaseView}
           title="Purchase"
-          init="true"
           renderBackButton={()=>(<View />)}
         />
         <Scene

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList } from 'react-native';
+// import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { fetchPurchases } from '../actions';
 import { Spinner, Button } from './common';
@@ -18,8 +19,13 @@ class Fridge extends Component {
   }
 
   scanBarcode() {
-    // TODO: add barcode reading functionality
-    Actions.newProduct();
+    const isSimulator = true; // TODO: check device if simulator
+
+    if (isSimulator) { // DeviceInfo.isEmulator()) {
+      Actions.newProduct();
+    } else {
+      Actions.barcodeScanner();
+    }
   }
 
   renderList() {
