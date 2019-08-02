@@ -3,12 +3,13 @@ import { Text, TouchableWithoutFeedback, View } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import moment from 'moment';
 import { CardSection } from './common';
- 
+import { stringToDate } from '../util';
+
 class FridgeListItem extends Component {
 
   calculateExpirationDays(expirationDate) {
     const a = moment(new Date());
-    const b = moment(this.stringToDate(expirationDate));
+    const b = moment(stringToDate(expirationDate));
     const days = b.diff(a, 'days');
     const dayText = Math.abs(days) == 1 ? 'day' : 'days';
 
@@ -18,23 +19,6 @@ class FridgeListItem extends Component {
       return `expired ${-days} ${dayText} ago`;
     }
     return `expires today`;
-  }
-
-  /**
-   * converts dateString to Javascript Date object.
-   * @var dateString a string in format 'dd.MM.YYYY'
-   * @returns Date object
-   */
-  stringToDate = (dateString) => {
-    if (!dateString || dateString.constructor.name === 'Date') {
-      return dateString;
-    }
-
-    const day = dateString.substring(0,2);
-    const month = dateString.substring(3,5);
-    const year = dateString.substring(6,10);
-    
-    return new Date(`${year}-${month}-${day}`);
   }
 
   onRowPress() {

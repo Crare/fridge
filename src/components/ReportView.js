@@ -15,6 +15,16 @@ class ReportView extends Component {
     }
   }
 
+  spinner() {
+    return (
+      <Card>
+        <CardSection>
+          <Spinner />
+        </CardSection>
+      </Card>
+    ); 
+  }
+
   renderProduct() {
     if (this.props.productLoading) {
       return this.spinner();
