@@ -40,7 +40,6 @@ class ReportView extends Component {
   }
 
   pressedSend() {
-    console.log('pressed send!, report:', this.props.report);
     const { name, barcode } = this.props.report;
     const { product } = this.props;
 

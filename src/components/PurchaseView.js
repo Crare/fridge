@@ -18,8 +18,14 @@ class PurchaseView extends Component {
 
   pressedSave() {
     const { product, purchase } = this.props;
-    
-    this.props.savePurchase({ product, purchase });
+
+    if (purchase.expirationDate 
+      && purchase.remindBeforeDate 
+      && purchase.amount) {
+        this.props.savePurchase({ product, purchase });
+    } else {
+      console.log('save disabled, purchase missing something:', purchase);
+    }
   }
 
   reportProduct() {

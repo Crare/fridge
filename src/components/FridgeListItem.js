@@ -8,11 +8,11 @@ class FridgeListItem extends Component {
 
   calculateExpirationDays(expirationDate) {
     const a = moment(new Date());
-    const b = moment(new Date(expirationDate));
+    const b = moment(this.stringToDate(expirationDate));
     const days = b.diff(a, 'days');
     const dayText = Math.abs(days) == 1 ? 'day' : 'days';
 
-    if (days >= 1) {
+    if (days >= 0) {
       return `expires in ${days} ${dayText}`;
     } else if (days < 0) {
       return `expired ${-days} ${dayText} ago`;
@@ -20,12 +20,28 @@ class FridgeListItem extends Component {
     return `expires today`;
   }
 
+  /**
+   * converts dateString to Javascript Date object.
+   * @var dateString a string in format 'dd.MM.YYYY'
+   * @returns Date object
+   */
+  stringToDate = (dateString) => {
+    if (!dateString || dateString.constructor.name === 'Date') {
+      return dateString;
+    }
+
+    const day = dateString.substring(0,2);
+    const month = dateString.substring(3,5);
+    const year = dateString.substring(6,10);
+    
+    return new Date(`${year}-${month}-${day}`);
+  }
+
   onRowPress() {
     Actions.purchase({ selected_purchase: this.props.purchase });
   }
 
   render() {
-    console.log(this.props);
     const { name, expirationDate, amount } = this.props.purchase;
     const { containerStyle, titleStyle, expirationStyle, piecesStyle } = styles;
 

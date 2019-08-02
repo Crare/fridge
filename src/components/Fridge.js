@@ -51,7 +51,7 @@ class Fridge extends Component {
         </View>
       );
     }
-    console.log(purchases);
+    
     return (
       <View style={container}> 
         <Text style={{ padding: 10 }}>Fridge contains:</Text>
@@ -98,7 +98,6 @@ const styles = {
 
 
 const mapStateToProps = state => {
-  console.log(state.fridgeReducer);
   if (state.fridgeReducer.purchases) {
     const { purchases } = state.fridgeReducer;
     purchases.map( 
