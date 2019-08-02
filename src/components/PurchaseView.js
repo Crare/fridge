@@ -19,9 +19,7 @@ class PurchaseView extends Component {
   pressedSave() {
     const { product, purchase } = this.props;
 
-    if (purchase.expirationDate 
-      && purchase.remindBeforeDate 
-      && purchase.amount) {
+    if (purchase.expirationDate && purchase.amount) {
         this.props.savePurchase({ product, purchase });
     } else {
       console.log('save disabled, purchase missing something:', purchase);
@@ -94,9 +92,7 @@ class PurchaseView extends Component {
     const { purchase } = this.props;
     let disabled = true;
 
-    if (purchase.expirationDate 
-      && purchase.remindBeforeDate 
-      && purchase.amount) {
+    if (purchase.expirationDate && purchase.amount) {
       disabled = false;
     }
 
@@ -145,6 +141,36 @@ class PurchaseView extends Component {
     );
   }
 
+  renderReminderView() {
+    const { remindBeforeDate } = this.props.purchase;
+
+    if (!remindBeforeDate) {
+      return (
+        <Button onPress={() => this.props.purchaseUpdate({ prop: 'remindBeforeDate', value: '0' })}>
+          Add remind time
+        </Button>
+      );
+    }
+    return (
+      <Picker 
+        selectedValue={remindBeforeDate}
+        onValueChange={value => this.props.purchaseUpdate({ prop: 'remindBeforeDate',  value })}
+      >
+        <Picker.Item label="On expiration day" value="0" />
+        <Picker.Item label="1 day before" value="1" />
+        <Picker.Item label="2 days before" value="2" />
+        <Picker.Item label="3 days before" value="3" />
+        <Picker.Item label="4 days before" value="4" />
+        <Picker.Item label="5 days before" value="5" />
+        <Picker.Item label="6 days before" value="6" />
+        <Picker.Item label="1 week before" value="7" />
+        <Picker.Item label="2 weeks before" value="14" />
+        <Picker.Item label="3 weeks before" value="21" />
+        <Picker.Item label="4 weeks before" value="28" />
+      </Picker>
+    );
+  }
+
   cancel() {
     this.props.reset();
     Actions.popTo('fridge');
@@ -176,22 +202,7 @@ class PurchaseView extends Component {
 
           <CardSection style={pickerCardStyle}>
             <Text style={pickerTextStyle}>Remind me about the expiration:</Text>
-            <Picker 
-              selectedValue={remindBeforeDate}
-              onValueChange={value => this.props.purchaseUpdate({ prop: 'remindBeforeDate',  value })}
-            >
-              <Picker.Item label="On expiration day" value="0" />
-              <Picker.Item label="1 day before" value="1" />
-              <Picker.Item label="2 days before" value="2" />
-              <Picker.Item label="3 days before" value="3" />
-              <Picker.Item label="4 days before" value="4" />
-              <Picker.Item label="5 days before" value="5" />
-              <Picker.Item label="6 days before" value="6" />
-              <Picker.Item label="1 week before" value="7" />
-              <Picker.Item label="2 weeks before" value="14" />
-              <Picker.Item label="3 weeks before" value="21" />
-              <Picker.Item label="4 weeks before" value="28" />
-            </Picker>
+            {this.renderReminderView()}
           </CardSection>
 
           <CardSection>

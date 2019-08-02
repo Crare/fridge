@@ -8,15 +8,17 @@ import { stringToDate } from '../util';
 class FridgeListItem extends Component {
 
   calculateExpirationDays(expirationDate) {
-    const a = moment(new Date());
-    const b = moment(stringToDate(expirationDate));
+    const a = moment(new Date().setHours(0, 0, 0, 0));
+    const b = moment(stringToDate(expirationDate).setHours(0, 0, 0, 0));
     const days = b.diff(a, 'days');
-    const dayText = Math.abs(days) == 1 ? 'day' : 'days';
-
-    if (days >= 0) {
+    const days_abs = Math.abs(days);
+    const dayText = days_abs == 1 ? 'day' : 'days';
+    if (days > 1) {
       return `expires in ${days} ${dayText}`;
-    } else if (days < 0) {
+    } else if (days <= -1) {
       return `expired ${-days} ${dayText} ago`;
+    } else if (days == 1) {
+      return 'expires tomorrow';
     }
     return `expires today`;
   }

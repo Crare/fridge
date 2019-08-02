@@ -19,11 +19,11 @@ class BarcodeScanner extends Component {
   //   );
   // }
 
-  // componentDidMount() {
-  //   setTimeout(() => { // debug in simulator
-  //     this.onBarCodeRead({data: '123'}); //'6415600550390');
-  //   }, 1000);
-  // }
+  componentDidMount() {
+    setTimeout(() => { // debug in simulator
+      this.onBarCodeRead({data: '6415600550390'}); //'6415600550390');
+    }, 1000);
+  }
 
   onBarCodeRead(event) {
     this.setState({ foundBarcode: event.data });
