@@ -199,7 +199,6 @@ class PurchaseView extends Component {
               placeholder="1 piece, 2 pieces, etc..."
               onChangeText={value => this.props.purchaseUpdate({ prop: 'amount', value })}
               value={amount}
-              keyboardType="numeric"
             />
           </CardSection>
 
