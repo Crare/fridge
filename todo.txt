@@ -1,0 +1,6 @@
+TODO:
+notifications for reminders
+admin view for reports
+register user to login page
+
+maybe adding pictures?
