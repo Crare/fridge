@@ -49,6 +49,7 @@ export const fetchProduct = (productId) => {
 
 export const searchProductByBarcode = (barcode) => {
 
+  console.log('searchProductByBarcode, barcode: ', barcode);
   return (dispatch) => {
     dispatch({ type: PRODUCT_SEARCHING });
 

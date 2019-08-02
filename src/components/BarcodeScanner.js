@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { RNCamera } from 'react-native-camera';
 import { searchProductByBarcode } from '../actions';
-import { Spinner } from './common';
+import { Spinner, Card, CardSection } from './common';
 
 class BarcodeScanner extends Component {
 
@@ -19,14 +19,13 @@ class BarcodeScanner extends Component {
   //   );
   // }
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.props.searchProductByBarcode('123123'); // '6415600550390');
-    }, 1000);
-  }
+  // componentDidMount() {
+  //   setTimeout(() => { // debug in simulator
+  //     this.onBarCodeRead({data: '123'}); //'6415600550390');
+  //   }, 1000);
+  // }
 
   onBarCodeRead(event) {
-    console.warn(event.data);
     this.setState({ foundBarcode: event.data });
     this.props.searchProductByBarcode(event.data);
   }
@@ -54,13 +53,24 @@ class BarcodeScanner extends Component {
 
   renderFoundBarcode() {
     const { foundBarcode } = this.state;
+    const { productLabelStyle, productTextStyle } = styles;
 
     if (foundBarcode) {
       return (
-        <View style={{ flexDirection: 'row' }}>
-          <Text>Found barcode: {foundBarcode}</Text>
-          <Text>Searching for product...</Text>
-          <Spinner />
+        <View style={{ flex: 1 }}>
+          <Card>
+            <CardSection>
+              <Text style={productLabelStyle}>Found barcode: {foundBarcode}</Text>
+            </CardSection>
+
+            <CardSection>
+              <Text style={productTextStyle}>Searching for product...</Text>
+            </CardSection>
+
+            <CardSection>
+              <Spinner />
+            </CardSection>
+          </Card>
         </View>
       );
     }
@@ -89,6 +99,15 @@ const styles = {
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center'
+  },
+  productLabelStyle: {
+    flex: 1,
+    fontWeight: '600',
+    fontSize: 18
+  },
+  productTextStyle: {
+    flex: 2,
+    fontSize: 18
   }
 }
 
