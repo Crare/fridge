@@ -6,6 +6,7 @@ import { fetchPurchases } from '../actions';
 import { Spinner, Button } from './common';
 import FridgeListItem from './FridgeListItem'; 
 import { Actions } from 'react-native-router-flux';
+import { scheduleNotification } from '../util';
 
 
 class Fridge extends Component {
@@ -13,6 +14,7 @@ class Fridge extends Component {
   componentDidMount() {
     this.props.fetchPurchases();
     // TODO: handle empty results
+    scheduleNotification({ date: new Date(), message: 'hello' });
   }
 
   renderItem = ({ item }) => {

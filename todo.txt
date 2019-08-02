@@ -2,5 +2,7 @@ TODO:
 notifications for reminders
 admin view for reports
 register user to login page
+user settings page for setting up: notification time in the day.
+
 
 maybe adding pictures?

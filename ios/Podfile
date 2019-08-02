@@ -32,6 +32,8 @@ target 'fridge' do
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
+  pod 'RNCPushNotificationIOS', :path => '../node_modules/@react-native-community/push-notification-ios'
+
   target 'fridgeTests' do
     inherit! :search_paths
     # Pods for testing
