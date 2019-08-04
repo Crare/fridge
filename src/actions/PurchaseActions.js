@@ -16,7 +16,9 @@ import {
 import { dateToString, stringToDate } from '../util';
 
 export const purchaseUpdate = ({ prop, value }) => {
-  if (prop === 'expirationDate' && value.constructor.name !== 'String') {
+  if (prop === 'expirationDate' && value !== null && value.constructor.name !== 'String') {
+    value = dateToString(value);
+  } else if (prop === 'bestBeforeDate' && value !== null && value.constructor.name !== 'String') {
     value = dateToString(value);
   }
 
@@ -36,9 +38,16 @@ export const savePurchase = ({ product, purchase }) => {
       // existing purchase
       let updatableValues = {};
       updatableValues.amount = purchase.amount;
-      updatableValues.expirationDate = dateToString(purchase.expirationDate);
-      updatableValues.expirationDateInMs = stringToDate(purchase.expirationDate).getTime();
       updatableValues.remindBeforeDate = purchase.remindBeforeDate;
+      if (purchase.expirationDate != null) {
+        updatableValues.expirationDate = dateToString(purchase.expirationDate);
+        updatableValues.expirationDateInMs = stringToDate(purchase.expirationDate).getTime();
+        updatableValues.bestBeforeDate = null;
+      } else if (purchase.bestBeforeDate != null) {
+        updatableValues.bestBeforeDate = dateToString(purchase.bestBeforeDate);
+        updatableValues.expirationDateInMs = stringToDate(purchase.bestBeforeDate).getTime();
+        updatableValues.expirationDate = null;
+      }
 
       let collection = firebase.firestore().collection('purchases').doc(purchase.id);
 
@@ -53,13 +62,20 @@ export const savePurchase = ({ product, purchase }) => {
       let new_purchase = {
         name: product.name,
         barcode: product.barcode,
-        expirationDate: dateToString(purchase.expirationDate),
-        expirationDateInMs: stringToDate(purchase.expirationDate).getTime(),
         remindBeforeDate: purchase.remindBeforeDate,
         amount: purchase.amount,
         productId: product.id,
         userId: currentUser.uid
       };
+      if (purchase.expirationDate != null) {
+        new_purchase.expirationDate = dateToString(purchase.expirationDate);
+        new_purchase.expirationDateInMs = stringToDate(purchase.expirationDate).getTime();
+        new_purchase.bestBeforeDate = null;
+      } else if (purchase.bestBeforeDate != null) {
+        new_purchase.bestBeforeDate = dateToString(purchase.bestBeforeDate);
+        new_purchase.expirationDateInMs = stringToDate(purchase.bestBeforeDate).getTime();
+        new_purchase.expirationDate = null;
+      }
 
       firebase.firestore().collection('purchases').add(new_purchase).then((docRef) => {
         dispatch({ type: PURCHASE_SAVE_SUCCESS });

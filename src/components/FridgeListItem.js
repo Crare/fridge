@@ -7,18 +7,29 @@ import { stringToDate } from '../util';
 
 class FridgeListItem extends Component {
 
-  calculateExpirationDays(expirationDate) {
+  calculateExpirationDays(expirationDate, bestBeforeDate) {
+    let b;
+    let descriptionText = '', descriptionText2 = '';
+    if (expirationDate != null) {
+      b = moment(stringToDate(expirationDate));
+      descriptionText = 'expires';
+      descriptionText2 = 'expired';
+    } else {
+      b = moment(stringToDate(bestBeforeDate));
+      descriptionText = 'bestbefore';
+      descriptionText2 = 'bestbefore';
+    }
     const a = moment(new Date());
-    const b = moment(stringToDate(expirationDate));
     const days = b.diff(a, 'days');
     const dayText = Math.abs(days) == 1 ? 'day' : 'days';
 
+
     if (days >= 0) {
-      return `expires in ${days} ${dayText}`;
+      return `${descriptionText} in ${days} ${dayText}`;
     } else if (days < 0) {
-      return `expired ${-days} ${dayText} ago`;
+      return `${descriptionText2} ${-days} ${dayText} ago`;
     }
-    return `expires today`;
+    return `${descriptionText} today`;
   }
 
   onRowPress() {
@@ -26,7 +37,7 @@ class FridgeListItem extends Component {
   }
 
   render() {
-    const { name, expirationDate, amount } = this.props.purchase;
+    const { name, expirationDate, bestBeforeDate, amount } = this.props.purchase;
     const { containerStyle, titleStyle, expirationStyle, piecesStyle } = styles;
 
     return (
@@ -34,7 +45,7 @@ class FridgeListItem extends Component {
         <View style={containerStyle}>
           <CardSection style={{ flexDirection: 'row' }}>
             <Text style={expirationStyle}>
-              {this.calculateExpirationDays(expirationDate)}
+              {this.calculateExpirationDays(expirationDate, bestBeforeDate)}
             </Text>
             <Text style={titleStyle}>
               {name}

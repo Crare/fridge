@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, ScrollView, Text, Picker } from 'react-native';
+import { View, ScrollView, KeyboardAvoidingView, Text, Picker } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { Card, CardSection, Input, Button, Spinner, CustomDatePicker } from './common';
 import { fetchProduct, purchaseUpdate, savePurchase, fetchPurchase, reset, deletePurchase } from '../actions';
@@ -19,8 +19,7 @@ class PurchaseView extends Component {
   pressedSave() {
     const { product, purchase } = this.props;
 
-    if (purchase.expirationDate 
-      && purchase.remindBeforeDate 
+    if ((purchase.expirationDate !== null || purchase.bestBeforeDate !== null)
       && purchase.amount) {
         this.props.savePurchase({ product, purchase });
     } else {
@@ -94,8 +93,7 @@ class PurchaseView extends Component {
     const { purchase } = this.props;
     let disabled = true;
 
-    if (purchase.expirationDate 
-      && purchase.remindBeforeDate 
+    if ((purchase.expirationDate !== null || purchase.bestBeforeDate !== null)
       && purchase.amount) {
       disabled = false;
     }
@@ -150,62 +148,138 @@ class PurchaseView extends Component {
     Actions.popTo('fridge');
   }
 
-  render() {
-    const { expirationDate, remindBeforeDate, amount } = this.props.purchase;
+  renderReminderInput() {
+
+    const { remindBeforeDate, expirationDate, bestBeforeDate } = this.props.purchase;
     const { pickerCardStyle, pickerTextStyle } = styles;
+    if (expirationDate === null && bestBeforeDate === null) {
+      return null;
+    }
+    if (remindBeforeDate === null) {
+      return (
+      <CardSection>
+        <Button onPress={() => this.props.purchaseUpdate({ prop: 'remindBeforeDate', value: 0 })}>
+          Add reminder before date
+        </Button>
+      </CardSection>
+      );
+    }
+
+    const dateType = expirationDate !== null ? 'expiration date' : 'bestbefore date';
 
     return (
-      <ScrollView>
+      <CardSection style={pickerCardStyle}>
+        <Text style={pickerTextStyle}>Remind me about the {dateType}:</Text>
+        <Picker 
+          selectedValue={remindBeforeDate}
+          onValueChange={value => this.props.purchaseUpdate({ prop: 'remindBeforeDate',  value })}
+        >
+          <Picker.Item label="On expiration day" value="0" />
+          <Picker.Item label="1 day before" value="1" />
+          <Picker.Item label="2 days before" value="2" />
+          <Picker.Item label="3 days before" value="3" />
+          <Picker.Item label="4 days before" value="4" />
+          <Picker.Item label="5 days before" value="5" />
+          <Picker.Item label="6 days before" value="6" />
+          <Picker.Item label="1 week before" value="7" />
+          <Picker.Item label="2 weeks before" value="14" />
+          <Picker.Item label="3 weeks before" value="21" />
+          <Picker.Item label="4 weeks before" value="28" />
+        </Picker>
+      </CardSection>
+    );
+  }
 
-        {this.renderProduct()}
+  renderSelectDate() {
+    const { expirationDate, bestBeforeDate } = this.props.purchase;
 
-        <Card>
+    if (expirationDate === null &&  bestBeforeDate === null) {
+      return (
+        <CardSection>
+          <Button onPress={() => this.props.purchaseUpdate({ prop: 'expirationDate', value: new Date()})}>Add expiration date</Button>
+          <Button onPress={() => this.props.purchaseUpdate({ prop: 'bestBeforeDate', value: new Date()})}>Add bestbefore date</Button>
+        </CardSection>
+      );
+    } else if (bestBeforeDate !== null) {
+      return (
+        <View>
 
-          <CardSection>
-            <CustomDatePicker
-            label="Expiration date:" 
-            date={expirationDate}
-            dateChanged={value => this.props.purchaseUpdate({ prop: 'expirationDate', value })}
-            />
-          </CardSection>
-          
-          <CardSection style={{ padding: 15 }}>
-            <Text>Add another purchase by scanning the barcode again, if expiration date is different.</Text>
-          </CardSection>
+        <CardSection>
+          <Button onPress={() => {
+            this.props.purchaseUpdate({prop: 'expirationDate', value: bestBeforeDate});
+            this.props.purchaseUpdate({prop: 'bestBeforeDate', value: null});
+          }}>Change to expiration date</Button>
+        </CardSection>
 
-          <CardSection style={pickerCardStyle}>
-            <Text style={pickerTextStyle}>Remind me about the expiration:</Text>
-            <Picker 
-              selectedValue={remindBeforeDate}
-              onValueChange={value => this.props.purchaseUpdate({ prop: 'remindBeforeDate',  value })}
-            >
-              <Picker.Item label="On expiration day" value="0" />
-              <Picker.Item label="1 day before" value="1" />
-              <Picker.Item label="2 days before" value="2" />
-              <Picker.Item label="3 days before" value="3" />
-              <Picker.Item label="4 days before" value="4" />
-              <Picker.Item label="5 days before" value="5" />
-              <Picker.Item label="6 days before" value="6" />
-              <Picker.Item label="1 week before" value="7" />
-              <Picker.Item label="2 weeks before" value="14" />
-              <Picker.Item label="3 weeks before" value="21" />
-              <Picker.Item label="4 weeks before" value="28" />
-            </Picker>
-          </CardSection>
-
-          <CardSection>
-            <Input label="Amount:" 
-              placeholder="1 piece, 2 pieces, etc..."
-              onChangeText={value => this.props.purchaseUpdate({ prop: 'amount', value })}
-              value={amount}
-            />
-          </CardSection>
-
-        </Card>
-
-        {this.renderButtons()}
+        <CardSection>
+          <CustomDatePicker
+          label="Bestbefore date: " 
+          date={bestBeforeDate}
+          dateChanged={value => this.props.purchaseUpdate({ prop: 'bestBeforeDate', value })}
+          />
+        </CardSection>
         
-      </ScrollView>
+        <CardSection style={{ padding: 15 }}>
+          <Text>Add another purchase by scanning the barcode again, if bestbefore date is different.</Text>
+        </CardSection>
+      </View>
+      );
+    }
+    return (
+      <View>
+
+        <CardSection>
+          <Button onPress={() => {
+            this.props.purchaseUpdate({prop: 'bestBeforeDate', value: expirationDate});
+            this.props.purchaseUpdate({prop: 'expirationDate', value: null});
+          }}>Change to bestbefore date</Button>
+        </CardSection>
+
+        <CardSection>
+          <CustomDatePicker
+          label="Expiration date: " 
+          date={expirationDate}
+          dateChanged={value => this.props.purchaseUpdate({ prop: 'expirationDate', value })}
+          />
+        </CardSection>
+        
+        <CardSection style={{ padding: 15 }}>
+          <Text>Add another purchase by scanning the barcode again, if expiration date is different.</Text>
+        </CardSection>
+      </View>
+    );
+  }
+
+  render() {
+    const { expirationDate, amount } = this.props.purchase;
+    const { container } = styles;
+
+    return (
+      <KeyboardAvoidingView style={container} behavior="position" enabled>
+        <ScrollView>
+
+          {this.renderProduct()}
+
+          <Card>
+
+            {this.renderSelectDate()}
+
+            {this.renderReminderInput()}
+
+            <CardSection>
+              <Input label="Amount:" 
+                placeholder="1 piece, 2 pieces, etc..."
+                onChangeText={value => this.props.purchaseUpdate({ prop: 'amount', value })}
+                value={amount}
+              />
+            </CardSection>
+
+          </Card>
+
+          {this.renderButtons()}
+          
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   };
 }
