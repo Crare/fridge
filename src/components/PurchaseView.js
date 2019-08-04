@@ -165,7 +165,6 @@ class PurchaseView extends Component {
             <CustomDatePicker
             label="Expiration date:" 
             date={expirationDate}
-            minDate={new Date()}
             dateChanged={value => this.props.purchaseUpdate({ prop: 'expirationDate', value })}
             />
           </CardSection>

@@ -2,5 +2,6 @@ TODO:
 notifications for reminders
 admin view for reports
 register user to login page
+add purchases without barcode scan
 
 maybe adding pictures?
