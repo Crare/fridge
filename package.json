@@ -8,11 +8,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "firebase": "^6.3.3",
+    "firebase": "^6.4.0",
     "moment": "^2.24.0",
     "react": "16.8.6",
     "react-native": "0.60.4",
-    "react-native-camera": "^3.0.0",
+    "react-native-camera": "^3.1.2",
     "react-native-datepicker": "^1.7.2",
     "react-native-device-info": "^2.3.2",
     "react-native-router-flux": "^4.0.6",
