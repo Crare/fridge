@@ -10,10 +10,11 @@ import {
   PURCHASE_DELETE_SUCCESS,
   PURCHASES_FETCHING,
   PURCHASES_FETCH_NO_RESULTS,
-  PURCHASES_FETCH_SUCCESS,
-  RESET
+  PURCHASES_FETCH_SUCCESS
 } from './types';
 import { dateToString, stringToDate } from '../util';
+
+let unsubscribe; 
 
 export const purchaseUpdate = ({ prop, value }) => {
   if (prop === 'expirationDate' && value !== null && value.constructor.name !== 'String') {
@@ -95,7 +96,8 @@ export const fetchPurchase = (purchaseId) => {
   return (dispatch) => {
     dispatch({ type: PURCHASE_FETCHING });
 
-    firebase.firestore().collection("purchases").doc(purchaseId)
+    // listen for latest purchase changes
+    unsubscribe = firebase.firestore().collection("purchases").doc(purchaseId)
     .onSnapshot((snapshot) => {
       if (snapshot.exists) {
         let purchase = snapshot.data();
@@ -113,6 +115,7 @@ export const deletePurchase = (purchaseId) => {
 
   return (dispatch) => {
     dispatch({ type: PURCHASE_DELETING });
+    unsubscribe(); // unsubscribe to latest purchase document changes.
 
     firebase.firestore().collection("purchases").doc(purchaseId).delete().then(() => {
       dispatch({ type: PURCHASE_DELETE_SUCCESS });
