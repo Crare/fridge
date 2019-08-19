@@ -96,12 +96,14 @@ export const fetchPurchase = (purchaseId) => {
     dispatch({ type: PURCHASE_FETCHING });
 
     firebase.firestore().collection("purchases").doc(purchaseId)
-    .onSnapshot(function(doc) {
-      if (doc.exists) {
-        let purchase = doc.data();
-        purchase.id = doc.id;
+    .onSnapshot((snapshot) => {
+      if (snapshot.exists) {
+        let purchase = snapshot.data();
+        purchase.id = snapshot.id;
         dispatch({ type: PURCHASE_FETCH_SUCCESS, payload: purchase });
       }
+    }, (err) =>{
+      console.error("Error fetching document: ", err);
     });
   };
 }
@@ -112,12 +114,12 @@ export const deletePurchase = (purchaseId) => {
   return (dispatch) => {
     dispatch({ type: PURCHASE_DELETING });
 
-    let purchaseRef = firebase.firestore().collection('purchases').doc(purchaseId);
-    firebase.firestore().batch().delete(purchaseRef).commit()
-    .then(() => {
+    firebase.firestore().collection("purchases").doc(purchaseId).delete().then(() => {
       dispatch({ type: PURCHASE_DELETE_SUCCESS });
-      dispatch({ type: RESET });
       Actions.main({ type: 'reset' });
+    }).catch(function(error) {
+      console.error("Error removing document: ", error);
+      // TODO: handle delete error
     });
 
   }
