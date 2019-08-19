@@ -1,41 +1,41 @@
 // auth
-export const EMAIL_CHANGED = 'email_changed';
-export const PASSWORD_CHANGED = 'password_changed';
-export const LOGIN_USER_SUCCESS = 'login_user_success';
-export const LOGIN_USER_FAIL = 'login_user_fail';
-export const LOGIN_USER = 'login_user';
-export const LOGOUT_USER = 'logout_user';
-export const CHECKING_USER_LOGIN = 'checking_user_login';
-export const NO_USER_LOGGED_IN = 'no_user_logged_in';
+export const EMAIL_CHANGED = 'EMAIL_CHANGED';
+export const PASSWORD_CHANGED = 'PASSWORD_CHANGED';
+export const LOGIN_USER_SUCCESS = 'LOGIN_USER_SUCCESS';
+export const LOGIN_USER_FAIL = 'LOGIN_USER_FAIL';
+export const LOGIN_USER = 'LOGIN_USER';
+export const LOGOUT_USER = 'LOGOUT_USER';
+export const CHECKING_USER_LOGIN = 'CHECKING_USER_LOGIN';
+export const NO_USER_LOGGED_IN = 'NO_USER_LOGGED_IN';
 
 //fridge
-export const PURCHASES_FETCH_SUCCESS = 'purchases_fetch_success';
-export const PURCHASES_FETCHING = 'purchases_fetching';
-export const PURCHASES_FETCH_NO_RESULTS = 'purchase_fetch_no_results';
+export const PURCHASES_FETCH_SUCCESS = 'PURCHASES_FETCH_SUCCESS';
+export const PURCHASES_FETCHING = 'PURCHASES_FETCHING';
+export const PURCHASES_FETCH_NO_RESULTS = 'PURCHASE_FETCH_NO_RESULTS';
 
 // purchase
-export const PURCHASE_UPDATE = 'purchase_update';
-export const PURCHASE_SAVING = 'purchase_saving';
-export const PURCHASE_SAVE_SUCCESS = 'purchase_save_success';
-export const PURCHASE_FETCHING = "purchase_fetching";
-export const PURCHASE_FETCH_SUCCESS = "purchase_fetch_success";
-export const PURCHASE_DELETING = 'purchase_deleting';
-export const PURCHASE_DELETE_SUCCESS = 'purchase_delete_success';
+export const PURCHASE_UPDATE = 'PURCHASE_UPDATE';
+export const PURCHASE_SAVING = 'PURCHASE_SAVING';
+export const PURCHASE_SAVE_SUCCESS = 'PURCHASE_SAVE_SUCCESS';
+export const PURCHASE_FETCHING = "PURCHASE_FETCHING";
+export const PURCHASE_FETCH_SUCCESS = "PURCHASE_FETCH_SUCCESS";
+export const PURCHASE_DELETING = 'PURCHASE_DELETING';
+export const PURCHASE_DELETE_SUCCESS = 'PURCHASE_DELETE_SUCCESS';
 
 // product
-export const PRODUCT_UPDATE = 'product_update';
-export const PRODUCT_SAVING = 'product_saving';
-export const PRODUCT_SAVE_SUCCESS = 'product_save_success';
-export const PRODUCT_FETCHING = 'product_fetching';
-export const PRODUCT_FETCH_SUCCESS = 'product_fetch_success';
-export const PRODUCT_SEARCHING = 'product_searching';
-export const PRODUCT_SEARCH_NO_RESULTS = 'product_search_no_results';
-export const PRODUCT_SEARCH_GOT_RESULT = 'product_search_got_result';
+export const PRODUCT_UPDATE = 'PRODUCT_UPDATE';
+export const PRODUCT_SAVING = 'PRODUCT_SAVING';
+export const PRODUCT_SAVE_SUCCESS = 'PRODUCT_SAVE_SUCCESS';
+export const PRODUCT_FETCHING = 'PRODUCT_FETCHING';
+export const PRODUCT_FETCH_SUCCESS = 'PRODUCT_FETCH_SUCCESS';
+export const PRODUCT_SEARCHING = 'PRODUCT_SEARCHING';
+export const PRODUCT_SEARCH_NO_RESULTS = 'PRODUCT_SEARCH_NO_RESULTS';
+export const PRODUCT_SEARCH_GOT_RESULT = 'PRODUCT_SEARCH_GOT_RESULT';
 
 // report
-export const REPORT_UPDATE = 'report_update';
-export const REPORT_SAVING = 'report_saving';
-export const REPORT_SAVE_SUCCESS = 'report_save_success';
+export const REPORT_UPDATE = 'REPORT_UPDATE';
+export const REPORT_SAVING = 'REPORT_SAVING';
+export const REPORT_SAVE_SUCCESS = 'REPORT_SAVE_SUCCESS';
 
 
-export const RESET = 'reset';
+export const RESET = 'RESET';
