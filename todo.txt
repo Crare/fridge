@@ -3,5 +3,8 @@ notifications for reminders
 admin view for reports
 register user to login page
 add purchases without barcode scan
+tests
+better ui
+
 
 maybe adding pictures?

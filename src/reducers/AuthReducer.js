@@ -9,7 +9,7 @@ import {
   CHECKING_USER_LOGIN
 } from '../actions/types';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
   email: '',
   password: '',
   user: null,
